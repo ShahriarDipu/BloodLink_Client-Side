@@ -1,63 +1,92 @@
-import { Heart, Clock, ShieldCheck, Activity } from "lucide-react";
+import { 
+  Droplet, 
+  Search, 
+  Heart, 
+  Users, 
+  Clock, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  ArrowRight,
+  Sparkles,
+  Shield,
+  Activity
+} from 'lucide-react';
+import { motion } from "motion/react";
 
 export default function WhyDonateBloodSection() {
+
+
+  const features = [
+    {
+      icon: Heart,
+      title: "Save Lives",
+      description: "Every donation can save up to 3 lives. Be a hero today.",
+      color: "from-rose-500 to-pink-500"
+    },
+    {
+      icon: Clock,
+      title: "Quick Process",
+      description: "Donation takes only 10-15 minutes of your precious time.",
+      color: "from-amber-500 to-orange-500"
+    },
+    {
+      icon: Shield,
+      title: "Safe & Secure",
+      description: "All donations are screened and handled with utmost care.",
+      color: "from-emerald-500 to-teal-500"
+    },
+    {
+      icon: Activity,
+      title: "Health Benefits",
+      description: "Regular donation helps maintain good health and reduces risks.",
+      color: "from-blue-500 to-indigo-500"
+    }
+  ];
+
+  const stats = [
+    { value: "10K+", label: "Donors Registered" },
+    { value: "50K+", label: "Lives Saved" },
+    { value: "100+", label: "Hospitals Connected" },
+    { value: "64", label: "Districts Covered" }
+  ];
   return (
-    <section className="max-w-6xl mx-auto py-16 px-4 text-center">
+   <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Why Donate Blood?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Your single donation can make a tremendous impact on someone's life
+            </p>
+          </motion.div>
 
-      {/* Heading */}
-      <h2 className="text-3xl font-bold">Why Donate Blood?</h2>
-      <p className="text-gray-600 mt-2">
-        Your single donation can make a tremendous impact on someone's life
-      </p>
-
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-
-
-        <div className="p-6 rounded-2xl shadow-sm bg-white">
-          <div className="w-12 h-12 mx-auto rounded-xl bg-pink-100 flex items-center justify-center">
-            <Heart className="text-pink-600" />
+          <div className="grid lg:grid-cols-4 gap-8 w-15/17 md:w-full mx-auto">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="group p-8 bg-gray-50 rounded-3xl hover:bg-white hover:shadow-xl hover:shadow-rose-100 transition-all duration-300"
+              >
+                <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </motion.div>
+            ))}
           </div>
-          <h3 className="font-bold mt-4">Save Lives</h3>
-          <p className="text-gray-600 mt-2">
-            Every donation can save up to 3 lives. Be a hero today.
-          </p>
         </div>
+      </section>
 
-        {/* Quick Process */}
-        <div className="p-6 rounded-2xl shadow-sm bg-white">
-          <div className="w-12 h-12 mx-auto rounded-xl bg-orange-100 flex items-center justify-center">
-            <Clock className="text-orange-600" />
-          </div>
-          <h3 className="font-bold mt-4">Quick Process</h3>
-          <p className="text-gray-600 mt-2">
-            Donation takes only 10–15 minutes of your precious time.
-          </p>
-        </div>
-
-        {/* Safe & Secure */}
-        <div className="p-6 rounded-2xl shadow-sm bg-white">
-          <div className="w-12 h-12 mx-auto rounded-xl bg-green-100 flex items-center justify-center">
-            <ShieldCheck className="text-green-600" />
-          </div>
-          <h3 className="font-bold mt-4">Safe & Secure</h3>
-          <p className="text-gray-600 mt-2">
-            All donations are screened and handled with utmost care.
-          </p>
-        </div>
-
-        {/* Health Benefits */}
-        <div className="p-6 rounded-2xl shadow-sm bg-white">
-          <div className="w-12 h-12 mx-auto rounded-xl bg-blue-100 flex items-center justify-center">
-            <Activity className="text-blue-600" />
-          </div>
-          <h3 className="font-bold mt-4">Health Benefits</h3>
-          <p className="text-gray-600 mt-2">
-            Regular donation helps maintain good health and reduces risks.
-          </p>
-        </div>
-
-      </div>
-    </section>
   );
 }
