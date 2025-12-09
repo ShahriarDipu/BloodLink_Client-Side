@@ -1,0 +1,167 @@
+import { Menu, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { NavLink} from "react-router";
+import { Droplet } from "lucide-react";
+
+
+export const Navbar = () => {
+
+  
+
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10); 
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+const logo =<>
+  <NavLink
+      to="/"
+      className="flex items-center gap-2"
+    
+    >
+      {/* ICON BOX */}
+      <div
+        className="
+          bg-gradient-to-br from-rose-400 to-rose-800
+          p-2.5 rounded-xl shadow-md
+          flex items-center justify-center
+        "
+      >
+        <Droplet
+          className="   w-5 h-5 text-white"
+         
+       
+        />
+      </div>
+
+      {/* TEXT */}
+      <span
+        className="
+          text-xl font-bold
+          bg-gradient-to-r from-rose-400 to-rose-800
+          bg-clip-text text-transparent
+        "
+      >
+        BloodLink
+      </span>
+    </NavLink>
+</>
+const links=<>
+ <div className="grid grid-cols-1 sm:flex">
+   <li>
+ <NavLink>
+  Home
+ </NavLink>
+  </li>
+<li>
+   <NavLink>
+   Donation Requests
+ </NavLink>
+
+</li>
+<li>
+   <NavLink>
+ Search Donors
+ </NavLink>
+
+</li>
+<li>
+   <NavLink>
+Funding
+ </NavLink>
+
+</li>
+ </div>
+    
+</>
+
+  return (
+   
+   <>
+   <div
+      className={`w-full fixed top-0 left-0 z-50 transition-all duration-300 
+      ${scrolled ? "  bg-gradient-to-r from-rose-100 to-rose-200 shadow-md" : "bg-white shadow-sm"}`}
+    >
+
+  <div className="max-w-[90%] mx-auto navbar">
+
+    {/* LEFT */}
+    <div className="navbar-start">
+      <div className="dropdown">
+        <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
+          </svg>
+        </div>
+
+        <ul
+          tabIndex={-1}
+          className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+        >
+          {links}
+        </ul>
+      </div>
+
+
+{logo}
+
+    </div>
+
+    {/* CENTER (Desktop Only) */}
+    <div className="navbar-center hidden lg:flex">
+      <ul className="menu menu-horizontal px-1">
+        {links}
+      </ul>
+    </div>
+
+    {/* RIGHT */}
+    <div className="navbar-end">
+      <div className="dropdown dropdown-end">
+        <div
+          tabIndex={0}
+          role="button"
+          className="btn btn-ghost btn-circle avatar"
+        >
+          <div className="w-10 rounded-full">
+            <img
+              alt="User Avatar"
+              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+            />
+          </div>
+        </div>
+
+        <ul
+          tabIndex={-1}
+          className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+        >
+          <li>
+            <a className="justify-between">
+              Profile
+              <span className="badge">New</span>
+            </a>
+          </li>
+          <li><a>Settings</a></li>
+          <li><a>Logout</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+   </>
+  );
+};
