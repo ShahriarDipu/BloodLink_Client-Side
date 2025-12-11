@@ -1,18 +1,69 @@
 import { Droplet } from "lucide-react";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
+import { useForm, useWatch } from 'react-hook-form';
+import { AuthContext } from "../../../Context/AuthContext";
+import { useLoaderData, useLocation, useNavigate } from "react-router";
+
+
+
 
 const LoginRegistration = () => {
+   const location = useLocation();
+
+
+ const navigate = useNavigate();
+  const{createUser, signInUser }=use(AuthContext)
+
+
+  const {fullDistrict, fullUpazila}=useLoaderData()
+
+
+
+   const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
+
+  const {
+  register: registerLogin,
+  handleSubmit:handleSubmitLogin,
+
+} = useForm();
+const selectedDistrict = useWatch({
+  control,
+  name:"district"
+})
+
+
+const filteredUpazilas = fullUpazila.filter(
+  u=>u.district_id===selectedDistrict
+);
+
+
+const handleLogin=(data)=>{
+ signInUser(data.email, data.password)
+ .then(res=>{
+   navigate(location?.state || '/')
+  console.log("login successful", res)
+  
+ })
+ .catch(error=>{
+  console.log(error)
+ })
+}
+
+const handleRegister=(data)=>{
+console.log(data)
+createUser(data.email,data.password)
+}
+
+
+
+
   const [activeTab, setActiveTab] = useState("login");
 
-  // sample district/upazila (replace later)
-  const districts = ["Dhaka", "Chattogram", "Rajshahi"];
-  const upazilas = {
-    Dhaka: ["Dhanmondi", "Mirpur", "Gulshan"],
-    Chattogram: ["Pahartali", "Kotwali"],
-    Rajshahi: ["Boalia", "Motihar"],
-  };
-
-  const [selectedDistrict, setSelectedDistrict] = useState("");
 
   return (
     <div className="min-h-screen w-full flex">
@@ -75,10 +126,11 @@ const LoginRegistration = () => {
 
           {/* ================ LOGIN FORM ================ */}
           {activeTab === "login" && (
-            <form>
+            <form onSubmit={handleSubmitLogin(handleLogin)}>
               <div className="mb-4">
                 <label className="block mb-1 font-light">Email</label>
                 <input
+                {...registerLogin('email')}
                   type="email"
                   name="email"
                   placeholder="your@email.com"
@@ -90,6 +142,7 @@ const LoginRegistration = () => {
               <div className="mb-4">
                 <label className="block mb-1 font-light">Password</label>
                 <input
+                {...registerLogin('password')}
                   type="password"
                   name="password"
                   placeholder="••••••••"
@@ -98,19 +151,8 @@ const LoginRegistration = () => {
                 />
               </div>
 
-              <div className="mb-6">
-                <label className="block mb-1 font-light">Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="••••••••"
-                  className="w-full border border-rose-100 px-3 py-2 rounded-lg bg-gray-50
-                  focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
-                />
-              </div>
-
               <button
-                type="button"
+                type="submit"
                 className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg font-semibold"
               >
                 Login
@@ -120,7 +162,7 @@ const LoginRegistration = () => {
 
           {/* ================ REGISTER FORM ================ */}
           {activeTab === "register" && (
-           <form className="space-y-5">
+           <form onSubmit={handleSubmit(handleRegister)} className="space-y-5">
 
   {/* Full Name */}
   <div>
@@ -133,7 +175,7 @@ const LoginRegistration = () => {
       </span>
 
       <input
-        type="text"
+        type="text" {...register('fullName')}
         placeholder="Enter your full name"
         className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
         focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
@@ -153,6 +195,7 @@ const LoginRegistration = () => {
       </span>
 
       <input
+         {...register('email')}
         type="email"
         placeholder="Enter your email"
         className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
@@ -174,6 +217,7 @@ const LoginRegistration = () => {
       </span>
 
       <input
+         {...register('profileUrl')}
         type="url"
         placeholder="https://example.com/avatar.jpg"
         className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
@@ -186,7 +230,8 @@ const LoginRegistration = () => {
   <div>
     <label className="block mb-1 font-light">Blood Group</label>
     <select
-      className="w-full border font-light border-rose-100 px-3 py-3 rounded-xl bg-white
+     {...register('bloodGroup')}
+      className="w-full border font-light border-rose-100 select rounded-xl bg-white
       focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
     >
       <option>Select blood group</option>
@@ -203,13 +248,13 @@ const LoginRegistration = () => {
     <div>
       <label className="block mb-1 font-light">District</label>
       <select
-        className="w-full border font-light border-rose-100 px-3 py-3 rounded-xl bg-white
+      {...register('district')}
+        className="select w-full border font-light border-rose-100 rounded-xl bg-white
         focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
-        onChange={(e) => setSelectedDistrict(e.target.value)}
       >
         <option>Select district</option>
-        {districts.map((d) => (
-          <option key={d}>{d}</option>
+        {fullDistrict.map((d) => (
+          <option key={d.id} value={d.id}>{d.name}</option>
         ))}
       </select>
     </div>
@@ -218,19 +263,26 @@ const LoginRegistration = () => {
     <div>
       <label className="block mb-1 font-light">Upazila</label>
       <select
-        disabled={!selectedDistrict}
-        className={`w-full px-3 py-3 rounded-xl outline-none font-light
+      {...register('upazila')}
+   
+        className={`w-full rounded-xl outline-none font-light select
         ${
-          selectedDistrict
+         selectedDistrict
             ? "border border-rose-100 bg-white focus:border-rose-300 focus:ring-2 focus:ring-rose-200"
             : "bg-gray-200 border-gray-300 "
         }`}
       >
-        <option >Select upazila</option>
-        {selectedDistrict &&
-          upazilas[selectedDistrict]?.map((u) => (
-            <option key={u}>{u}</option>
-          ))}
+        
+                    <option value="">{
+                       selectedDistrict ? "Select Upazila" : "Select district first"
+                       }</option>
+                     {
+                       filteredUpazilas.map((u)=>(
+                         <option key={u.id} value={u.id}>
+                           {u.name}
+                         </option>
+                       ))
+                     }
       </select>
     </div>
   </div>
@@ -248,6 +300,7 @@ const LoginRegistration = () => {
 
       <input
         type="password"
+        {...register('password')}
         placeholder="Create a password"
         className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
         focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
@@ -255,20 +308,10 @@ const LoginRegistration = () => {
     </div>
   </div>
 
-  {/* Confirm Password */}
-  <div>
-    <label className="block mb-1 font-light">Confirm Password</label>
-    <input
-      type="password"
-      placeholder="Confirm your password"
-      className="w-full border border-rose-100 px-3 py-3 rounded-xl bg-gray-50
-      focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
-    />
-  </div>
 
   {/* Submit Button */}
   <button
-    type="button"
+    type="submit"
     className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl text-lg font-semibold"
   >
     Create Account

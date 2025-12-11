@@ -1,11 +1,12 @@
-import { Menu, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
-import { NavLink} from "react-router";
+import { Menu, ChevronDown} from "lucide-react";
+import { use, useContext, useEffect, useState } from "react";
+import { Link, NavLink} from "react-router";
 import { Droplet } from "lucide-react";
+import { AuthContext } from "../../Context/AuthContext";
 
 
 export const Navbar = () => {
-
+ const {user,logOut}=use(AuthContext)
   
 
   const [scrolled, setScrolled] = useState(false);
@@ -65,7 +66,7 @@ const links=<>
 
 </li>
 <li>
-   <NavLink>
+   <NavLink to="searchDonors">
  Search Donors
  </NavLink>
 
@@ -80,6 +81,20 @@ Funding
     
 </>
 
+
+
+
+
+const handleLogOut =()=>{
+  logOut()
+  .then(res=>{
+    console.log("Log Out Successful")
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+}
+  
   return (
    
    <>
@@ -125,21 +140,24 @@ Funding
       </ul>
     </div>
 
-    {/* RIGHT */}
-    <div className="navbar-end">
+{
+  user ?     <div className="navbar-end">
       <div className="dropdown dropdown-end">
         <div
           tabIndex={0}
           role="button"
           className="btn btn-ghost btn-circle avatar"
         >
-          <div className="w-10 rounded-full">
+          <div className="w-10 rounded-full ">
             <img
               alt="User Avatar"
               src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
             />
+            
           </div>
+    
         </div>
+      
 
         <ul
           tabIndex={-1}
@@ -151,11 +169,19 @@ Funding
               <span className="badge">New</span>
             </a>
           </li>
-          <li><a>Settings</a></li>
-          <li><a>Logout</a></li>
+        <li>  <Link to="dashboard"><a>Dashboard</a></Link></li>
+          <li><a onClick={handleLogOut}>Logout</a></li>
         </ul>
       </div>
     </div>
+:
+
+  <div className="navbar-end">
+      <NavLink to="/loginRegistration" className="btn">Sign In</NavLink>
+</div>
+}
+  
+    {/* RIGHT */}
 
   </div>
 </div>

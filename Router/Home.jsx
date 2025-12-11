@@ -6,7 +6,7 @@ import { StatisticsSection } from '../src/Pages/HomePage/StatisticsSection'
 import WhyDonateBloodSection from '../src/Pages/HomePage/WhyDonateBloodSection'
 import { BloodTypesSection } from '../src/Pages/HomePage/BloodTypesSection'
 import { ContuctUsSection } from '../src/Pages/HomePage/ContuctUsSection'
-import LoginRegister from '../src/Pages/Login/Registration/LoginRegistration'
+import { Outlet } from 'react-router'
 export const Home = () => {
   return (
 <>
@@ -18,7 +18,7 @@ export const Home = () => {
  <BloodTypesSection></BloodTypesSection>
 <ContuctUsSection></ContuctUsSection>
  <Footer></Footer>
- <LoginRegister></LoginRegister>
+
  </>
   )
 }
