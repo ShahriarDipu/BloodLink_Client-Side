@@ -1,13 +1,14 @@
 import { Menu, ChevronDown} from "lucide-react";
 import { use, useContext, useEffect, useState } from "react";
-import { Link, NavLink} from "react-router";
+import { Link, NavLink, useNavigate} from "react-router";
 import { Droplet } from "lucide-react";
 import { AuthContext } from "../../Context/AuthContext";
-
+import { useQuery } from "@tanstack/react-query";
+import { UseAxiosSecure } from "../../Hooks/UseAxiosSecure";
 
 export const Navbar = () => {
  const {user,logOut}=use(AuthContext)
-  
+const axiosSecure = UseAxiosSecure()  
 
   const [scrolled, setScrolled] = useState(false);
 
@@ -82,8 +83,7 @@ Funding
 </>
 
 
-
-
+  
 
 const handleLogOut =()=>{
   logOut()
@@ -95,6 +95,58 @@ const handleLogOut =()=>{
   })
 }
   
+
+
+
+  const navigate = useNavigate();
+
+const { data: userData, isLoading } = useQuery({
+  queryKey: ["donorRole", user?.email],
+  queryFn: async () => {
+    const res = await axiosSecure.get("/donors/role", {
+      params: { email: user.email }
+    });
+
+    console.log("Role from DB:", res.data.role);
+    return res.data;
+  },
+  enabled: !!user?.email,
+});
+
+
+
+
+
+const handleDashboard = () => {
+  if (!user) {
+    console.log("No user found → redirecting to login");
+    return navigate("/login");
+  }
+
+  if (isLoading) {
+    console.log("User role is still loading… Please wait");
+    return; // prevent navigation before DB role loads
+  }
+
+  const role = userData?.role;
+  console.log("Role fetched from DB:", role);
+
+  if (role === "admin") {
+    console.log("Navigating to ADMIN dashboard");
+    navigate("/dashboard/admin");
+  } 
+  else if (role === "volunteer") {
+    console.log("Navigating to VOLUNTEER dashboard");
+    navigate("/dashboard/volunteer");
+  } 
+  else {
+    console.log("Navigating to DONOR dashboard");
+    navigate("donorDashboard");
+  }
+};
+
+
+
   return (
    
    <>
@@ -169,7 +221,10 @@ const handleLogOut =()=>{
               <span className="badge">New</span>
             </a>
           </li>
-        <li>  <Link to="dashboard"><a>Dashboard</a></Link></li>
+        <li>  <Link
+        //  to="dashboard"
+        onClick={handleDashboard}
+         ><a>Dashboard</a></Link></li>
           <li><a onClick={handleLogOut}>Logout</a></li>
         </ul>
       </div>

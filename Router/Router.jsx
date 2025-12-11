@@ -5,6 +5,7 @@ import { Home } from "./Home";
 import LoginRegistration from "../src/Pages/Login/Registration/LoginRegistration";
 import { DashBoard } from "../src/Components/Dashboard/DashBoard";
 import SearchDonors from "../src/Pages/PublicPages/SearchDonors";
+import { DonorDashboard } from "../src/Pages/DashboardPages/DonorDashboard/DonorDashboard";
 
 
 export const  Router = createBrowserRouter([
@@ -36,5 +37,9 @@ export const  Router = createBrowserRouter([
 
     }
 },
+{
+  path:"donorDashboard",
+  Component:DonorDashboard
+}
 
 ]);
