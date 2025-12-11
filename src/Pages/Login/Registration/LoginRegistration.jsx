@@ -3,6 +3,7 @@ import React, { use, useState } from "react";
 import { useForm, useWatch } from 'react-hook-form';
 import { AuthContext } from "../../../Context/AuthContext";
 import { useLoaderData, useLocation, useNavigate } from "react-router";
+import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 
 
 
@@ -42,9 +43,16 @@ const filteredUpazilas = fullUpazila.filter(
 );
 
 
+
+const axiosSecure = UseAxiosSecure();
+
+
+
 const handleLogin=(data)=>{
  signInUser(data.email, data.password)
  .then(res=>{
+
+
    navigate(location?.state || '/')
   console.log("login successful", res)
   
@@ -55,8 +63,31 @@ const handleLogin=(data)=>{
 }
 
 const handleRegister=(data)=>{
+  const role= "donor"
+data.role=role;
 console.log(data)
 createUser(data.email,data.password)
+
+const districtName = fullDistrict.find(d=> d.id === data.district)?.name
+const upazilaName = fullUpazila.find(u=> u.id === data.upazila)?.name
+
+
+const donorInfo ={
+   fullName : data.fullName,
+   email:data.email,
+   password:data.password,
+   profileUrl:"",
+   bloodGroup:data.bloodGroup,
+   district:districtName,
+   upazila:upazilaName,
+   role:"donor",
+   createdAt: new Date()
+}
+
+ axiosSecure.post('/donors',donorInfo)
+  .then(res=>{
+    console.log('Successfully send to database')
+  })
 }
 
 

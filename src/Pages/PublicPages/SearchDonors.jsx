@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Droplet, MapPin, Search } from "lucide-react";
 import { useLoaderData } from "react-router";
 import { useForm, useWatch} from "react-hook-form"
 import { option } from "motion/react-client";
+import { UseAxiosSecure } from "../../Hooks/UseAxiosSecure";
 
 
 
 const SearchDonors = () => {
 
+  const [searchResult, setResults] =useState([])
+  const axiosSecure = UseAxiosSecure();
+
   const {districts, upazilas}=useLoaderData()
-const { register, control, formState:{errors}}=useForm()
+const { register,handleSubmit, control, formState:{errors}}=useForm()
 
 const selectedDistrict = useWatch({
   control,
@@ -20,8 +24,30 @@ const filteredUpazilas = upazilas.filter(
   u=>u.district_id===selectedDistrict
 );
 
+const handleSearch= (data)=>{
+ 
+  const districtName = districts.find(d=>d.id === data.district)?.name 
+  const upazilaName =upazilas.find(u=>u.id===data.upazila)?.name
+
+
+  const searchInfo={
+    bloodGroup:data.bloodGroup,
+    district:districtName,
+    upazila:upazilaName
+  }
+   axiosSecure.get("/donors", searchInfo)
+    .then(res => {
+      setResults(res.data);
+     console.log(res.data)
+    })
+    .catch(error => console.log(error));
+  
+}
+
 
   return (
+  <div>
+    <form onClick={handleSubmit(handleSearch)}>
     <div className="min-h-11/12 w-full bg-gradient-to-b from-rose-600 to-rose-800 flex flex-col items-center text-white py-20 px-4">
 
       {/* Top Button */}
@@ -45,7 +71,7 @@ const filteredUpazilas = upazilas.filter(
             <label className="flex items-center gap-1 text-sm font-semibold mb-1">
               <Droplet className="w-4 h-4 text-rose-600" /> Blood Group
             </label>
-            <select className="select w-full  font-light border border-rose-200 rounded-lg bg-gray-50 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 outline-none">
+            <select {...register("bloodGroup")} className="select w-full  font-light border border-rose-200 rounded-lg bg-gray-50 focus:border-rose-400 focus:ring-2 focus:ring-rose-200 outline-none">
               <option>Select blood group</option>
               <option>A+</option>
               <option>A−</option>
@@ -60,6 +86,7 @@ const filteredUpazilas = upazilas.filter(
 
           {/* District */}
           <div>
+            
             <label className="flex items-center gap-1 text-sm font-semibold mb-1">
               <MapPin className="w-4 h-4 text-rose-600" /> District
             </label>
@@ -100,12 +127,25 @@ const filteredUpazilas = upazilas.filter(
 
           {/* Search Button */}
           <div className="flex items-end">
-            <button className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg flex items-center justify-center gap-2 text-lg font-semibold">
+            <button type="submit" className="w-full btn bg-rose-600 hover:bg-rose-700 text-white py-2 rounded-lg flex items-center justify-center gap-2 text-lg font-semibold">
               <Search className="w-5 h-5" /> Search
             </button>
           </div>
 
         </div>
+      </div>
+    </div>
+    </form>
+    {/* Donor Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+        {searchResult.map((donor) => (
+          <div key={donor._id} className="border shadow-md rounded-lg p-4 bg-white">
+            <p><strong>Donor Name :</strong> {donor.fullName}</p>
+            <p><strong>Blood Group:</strong> {donor.bloodGroup}</p>
+            <p><strong>District:</strong> {donor.district}</p>
+            <p><strong>Upazila:</strong> {donor.upazila}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
