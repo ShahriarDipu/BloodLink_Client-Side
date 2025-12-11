@@ -10,6 +10,10 @@ import { UseAxiosSecure } from "../../Hooks/UseAxiosSecure";
 const SearchDonors = () => {
 
   const [searchResult, setResults] =useState([])
+const [loading, setLoading] = useState(false);
+const [searched, setSearched] = useState(false); 
+
+
   const axiosSecure = UseAxiosSecure();
 
   const {districts, upazilas}=useLoaderData()
@@ -25,6 +29,8 @@ const filteredUpazilas = upazilas.filter(
 );
 
 const handleSearch= (data)=>{
+    setLoading(true);
+  setSearched(true);
  
   const districtName = districts.find(d=>d.id === data.district)?.name 
   const upazilaName =upazilas.find(u=>u.id===data.upazila)?.name
@@ -35,10 +41,12 @@ const handleSearch= (data)=>{
     district:districtName,
     upazila:upazilaName
   }
-   axiosSecure.get("/donors", searchInfo)
+   axiosSecure.get("/donors/search", { params: searchInfo })
     .then(res => {
-      setResults(res.data);
-     console.log(res.data)
+      setTimeout(() => {
+        setResults(res.data);
+        setLoading(false);
+      }, 500);
     })
     .catch(error => console.log(error));
   
@@ -47,7 +55,7 @@ const handleSearch= (data)=>{
 
   return (
   <div>
-    <form onClick={handleSubmit(handleSearch)}>
+    <form onSubmit={handleSubmit(handleSearch)}>
     <div className="min-h-11/12 w-full bg-gradient-to-b from-rose-600 to-rose-800 flex flex-col items-center text-white py-20 px-4">
 
       {/* Top Button */}
@@ -136,17 +144,75 @@ const handleSearch= (data)=>{
       </div>
     </div>
     </form>
+    {/* Loading State */}
+{loading && (
+  <div className="flex flex-col items-center py-20 text-gray-600">
+    <span className="loading loading-spinner loading-lg text-rose-600"></span>
+    <p className="mt-4 text-lg font-medium">Searching donors...</p>
+  </div>
+)}
+{!loading && searched && searchResult.length === 0 && (
+  <div className="flex flex-col items-center py-20 text-gray-600">
+    <div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mb-4">
+      <span className="text-4xl text-rose-600">👤</span>
+    </div>
+    <h2 className="text-xl font-bold">No Donors Found</h2>
+    <p className="text-gray-500">
+      No donors match your search criteria. Try adjusting your filters.
+    </p>
+  </div>
+)}
+
     {/* Donor Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
-        {searchResult.map((donor) => (
-          <div key={donor._id} className="border shadow-md rounded-lg p-4 bg-white">
-            <p><strong>Donor Name :</strong> {donor.fullName}</p>
-            <p><strong>Blood Group:</strong> {donor.bloodGroup}</p>
-            <p><strong>District:</strong> {donor.district}</p>
-            <p><strong>Upazila:</strong> {donor.upazila}</p>
-          </div>
-        ))}
+    {!loading && searchResult.length > 0 && (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+    {searchResult.map((donor) => (
+     <div
+  key={donor._id}
+  className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100"
+>
+  {/* Top Gradient Bar */}
+  <div className="h-2 bg-gradient-to-r from-rose-500 to-red-500"></div>
+
+  <div className="p-5">
+
+    {/* Name + Blood Group Box */}
+    <div className="flex justify-between items-start mb-3">
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900">{donor.fullName}</h2>
+        <p className="text-gray-500 text-sm">Volunteer Blood Donor</p>
       </div>
+
+      <div className="px-3 py-1 bg-gradient-to-b from-rose-500 to-red-500 text-white rounded-md font-bold shadow">
+        {donor.bloodGroup}
+      </div>
+    </div>
+
+    {/* Location */}
+    <div className="flex items-center gap-2 text-gray-700 text-sm mb-2">
+      <MapPin className="w-4 h-4 text-rose-600" />
+      <span>{donor.district}, {donor.upazila}</span>
+    </div>
+
+    {/* Last Donation Date */}
+    {/* <div className="flex items-center gap-2 text-gray-700 text-sm mb-2">
+      <Calendar className="w-4 h-4 text-rose-600" />
+      <span>{donor.lastDonationDate ? donor.lastDonationDate : "Not available"}</span>
+    </div> */}
+
+    {/* Available Time */}
+    {/* <div className="flex items-center gap-2 text-gray-700 text-sm">
+      <Clock className="w-4 h-4 text-rose-600" />
+      <span>{donor.availableTime ? donor.availableTime : "Anytime"}</span>
+    </div> */}
+
+  </div>
+</div>
+
+    ))}
+  </div>
+)}
+
     </div>
   );
 };
