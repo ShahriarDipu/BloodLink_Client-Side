@@ -4,6 +4,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { AuthContext } from "../../../Context/AuthContext";
 import { useLoaderData, useLocation, useNavigate } from "react-router";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
+import axios from "axios";
 
 
 
@@ -13,7 +14,7 @@ const LoginRegistration = () => {
 
 
  const navigate = useNavigate();
-  const{createUser, signInUser }=use(AuthContext)
+  const{createUser, signInUser,updateUserProfile }=use(AuthContext)
 
 
   const {fullDistrict, fullUpazila}=useLoaderData()
@@ -63,10 +64,53 @@ const handleLogin=(data)=>{
 }
 
 const handleRegister=(data)=>{
+    const profileImg = data.photo[0];
   const role= "donor"
 data.role=role;
 console.log(data)
 createUser(data.email,data.password)
+
+  .then(result=>{
+        console.log(result.user)
+        //update user profile
+       
+
+        const formData = new FormData()
+        formData.append('image',profileImg)
+        const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST_API}`
+        axios.post(url, formData)
+        .then(res=>{
+          console.log("after img upload", res.data.data.url)
+
+
+          ///update user profile with image link and name
+
+          const userProfile = {
+            displayName: data.fullName,
+           
+            photoURL:res.data.data.url
+          }
+
+console.log(userProfile)
+          updateUserProfile(userProfile)
+          .then(res=>{
+            console.log("update successful")
+            //  navigate(location?.state || '/')
+          })
+          .catch(error=>{
+            console.log('error during update profile', error)
+          })
+        })
+
+      })
+      .catch(error=>{
+        console.log(error)
+      })
+
+
+
+
+
 
 const districtName = fullDistrict.find(d=> d.id === data.district)?.name
 const upazilaName = fullUpazila.find(u=> u.id === data.upazila)?.name
@@ -76,7 +120,7 @@ const donorInfo ={
    fullName : data.fullName,
    email:data.email,
    password:data.password,
-   profileUrl:"",
+   profileUrl:data.photoUrl,
    bloodGroup:data.bloodGroup,
    district:districtName,
    upazila:upazilaName,
@@ -234,26 +278,19 @@ const donorInfo ={
       />
     </div>
   </div>
+  
 
   {/* Avatar URL */}
   <div>
-    <label className="block mb-1 font-light">Avatar URL (Optional)</label>
+    <label className="block mb-1 font-light">Photo</label>
     <div className="relative">
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path d="M3 3h18v18H3z" />
-          <circle cx="8" cy="8" r="2" />
-          <path d="M21 15l-5-5L5 21" />
-        </svg>
-      </span>
+      
 
-      <input
-         {...register('profileUrl')}
-        type="url"
-        placeholder="https://example.com/avatar.jpg"
-        className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
-        focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
-      />
+    {/* Photo Field */}
+
+
+  <input type="file" {...register('photo',{required:true})} className="file-input w-full" placeholder="Your Photo" />
+  {errors.photo?.type==='required' && <p className='text-red-500'>Photo is required</p>}
     </div>
   </div>
 

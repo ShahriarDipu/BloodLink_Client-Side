@@ -6,6 +6,11 @@ import LoginRegistration from "../src/Pages/Login/Registration/LoginRegistration
 import { DashBoard } from "../src/Components/Dashboard/DashBoard";
 import SearchDonors from "../src/Pages/PublicPages/SearchDonors";
 import { DonorDashboard } from "../src/Pages/DashboardPages/DonorDashboard/DonorDashboard";
+import CreateDonationRequest from "../src/Pages/DashboardPages/DonorDashboard/CreateDonationRequest";
+import { MyDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/MyDonationRequest";
+import { DonarProfile } from "../src/Pages/DashboardPages/DonorDashboard/DonarProfile";
+import { DonorProfileDashboard } from "../src/Pages/DashboardPages/DonorDashboard/DonorProfileDashboard";
+
 
 
 export const  Router = createBrowserRouter([
@@ -39,7 +44,25 @@ export const  Router = createBrowserRouter([
 },
 {
   path:"donorDashboard",
-  Component:DonorDashboard
+  Component:DonorDashboard,
+  children:[
+       {
+  path:"createDonationRequest",
+  Component:CreateDonationRequest
+},
+{
+  path:"myDonationRequest",
+  Component:MyDonationRequest
+},
+{
+  path:"profile",
+  Component:DonarProfile
+}
+,{
+  path:"donorProfileDashboard",
+  Component:DonorProfileDashboard
+}
+      ]
 }
 
 ]);
