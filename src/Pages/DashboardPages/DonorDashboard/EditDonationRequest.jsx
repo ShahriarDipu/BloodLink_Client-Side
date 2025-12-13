@@ -3,89 +3,113 @@ import { useForm, useWatch } from "react-hook-form";
 import {
   User,
   Droplet,
-  Building,
   FileText,
   Send,
 } from "lucide-react";
-import { use } from "react";
+import { use, useContext, useEffect } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
-import { useLoaderData } from "react-router";
+import { useParams, useLoaderData, useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 
-const CreateDonationRequest =()=> {
+export const EditDonationRequest = () => {
+ const { id } = useParams();
+ console.log(id)
+  const navigate = useNavigate();
+  const axiosSecure = UseAxiosSecure();
 
-   const {user, loading}=use(AuthContext)
 
-if (loading) {
-  return <div className="text-center py-10">Loading...</div>;
-}
+  const {  districts, upazilas } = useLoaderData();
 
-console.log(user)
+  const { user, loading } = use(AuthContext);
 
-const axiosSecure = UseAxiosSecure()  
-const handleRequest = async (data) => {
- if (!user) {
-    console.log("no user")
- }
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+  } = useForm();
 
-    const districtName =
-  districts.find((d) => d.id === data.district)?.name;
+const {
+  data: donationRequest,
+  isLoading,
+} = useQuery({
+  queryKey : ["donationRequest", id],
+  enabled: !!id,
+  queryFn: async () => {
+    const res = await axiosSecure.get(`/donationRequests/${id}`);
+    console.log(res.data)
+    return res.data;
+  },
+});
 
-const upazilaName =
-  upazilas.find((u) => u.id === data.upazila)?.name;
+useEffect(() => {
+  if (donationRequest && districts.length && upazilas.length) {
+    const districtId = districts.find(
+      (d) => d.name === donationRequest.district
+    )?.id;
 
-  const donationRequest = {
-    requesterName: user.displayName,
-    requesterEmail: user.email,
+    const upazilaId = upazilas.find(
+      (u) => u.name === donationRequest.upazila
+    )?.id;
 
-    recipientName: data.recipientName,
-    district: districtName,
-    upazila: upazilaName,
+    reset({
+      recipientName: donationRequest.recipientName,
+      district: districtId || "",
+      upazila: upazilaId || "",
+      hospitalName: donationRequest.hospitalName,
+      hospitalAddress: donationRequest.hospitalAddress,
+      bloodGroup: donationRequest.bloodGroup,
+      donationDate: donationRequest.donationDate,
+      donationTime: donationRequest.donationTime,
+      message: donationRequest.message,
+    });
+  }
+}, [donationRequest, districts, upazilas, reset]);
 
-    hospitalName: data.hospitalName,
-    hospitalAddress: data.hospitalAddress,
 
-    bloodGroup: data.bloodGroup,
-    donationDate: data.donationDate,
-    donationTime: data.donationTime,
+  const selectedDistrictId = useWatch({
+    control,
+    name: "district",
+  });
 
-    message: data.message,
+  const filteredUpazilas = upazilas.filter(
+    (u) => u.district_id === selectedDistrictId
+  );
 
-    status: "pending",
-    createdAt: new Date(),
-  };
-console.log(donationRequest)
+
+
+  if (loading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
+
+ const handleUpdate = async (data) => {
   try {
-    const res = await axiosSecure.post(
-      "/donationrequests",
-      donationRequest
-    );
-    console.log("Request saved:", res.data);
+    const districtName = districts.find(
+      (d) => d.id === data.district
+    )?.name;
+
+    const upazilaName = upazilas.find(
+      (u) => u.id === data.upazila
+    )?.name;
+
+    const updatedData = {
+      ...data,
+      district: districtName,
+      upazila: upazilaName,
+    };
+
+    await axiosSecure.put(`/donationRequests/${id}`, updatedData);
+    navigate("/donorDashboard/myDonationRequests");
   } catch (error) {
-    console.error("Failed to create donation request", error);
+    console.error("Update failed", error);
   }
 };
 
 
-
-
-const { districts, upazilas } = useLoaderData();
-
-const {
-  register,
-  handleSubmit,
-  control,
-} = useForm();
-const selectedDistrictId = useWatch({
-  control,
-  name: "district",
-});
-const filteredUpazilas = upazilas.filter(
-  (u) => u.district_id === selectedDistrictId
-);
-
-
   return (
+
+   
     <div className="max-w-3xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -110,7 +134,7 @@ const filteredUpazilas = upazilas.filter(
 
           {/* Body */}
           <div className="p-8">
-            <form className="space-y-10" onSubmit={handleSubmit(handleRequest)}>
+        <form className="space-y-10" onSubmit={handleSubmit(handleUpdate)}>
 
               {/* Requester Info */}
               <section className="space-y-4">
@@ -149,7 +173,7 @@ const filteredUpazilas = upazilas.filter(
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter recipient's full name"
+                    // placeholder={donationRequest.recipientName}
                     {...register("recipientName")}
                     class="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm
                            focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-400"
@@ -165,7 +189,7 @@ const filteredUpazilas = upazilas.filter(
   {...register("district")}
   className="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm text-gray-600"
 >
-  <option value="">Select district</option>
+  <option >Select district</option>
   {districts.map((d) => (
     <option key={d.id} value={d.id}>
       {d.name}
@@ -189,7 +213,7 @@ const filteredUpazilas = upazilas.filter(
         : "bg-gray-100 text-gray-400 cursor-not-allowed"
     }`}
 >
-  <option value="">
+  <option >
     {selectedDistrictId ? "Select upazila" : "Select district first"}
   </option>
 
@@ -218,7 +242,7 @@ const filteredUpazilas = upazilas.filter(
                   <input
                     type="text"
                     {...register("hospitalName")}
-                    placeholder="e.g., Dhaka Medical College Hospital"
+                    // placeholder={donationRequest.hospitalName}
                     class="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm
                            focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-400"
                   />
@@ -231,7 +255,7 @@ const filteredUpazilas = upazilas.filter(
                   <input
                     type="text"
                     {...register("hospitalAddress")}
-                    placeholder="e.g., Zahir Raihan Rd, Dhaka"
+                    // placeholder={donationRequest.hospitalAddress}
                     class="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm
                            focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-400"
                   />
@@ -302,7 +326,7 @@ const filteredUpazilas = upazilas.filter(
                 <textarea
                   rows="4"
                   {...register("message")}
-                  placeholder="Why do you need blood?"
+                //   placeholder={donationRequest.message}
                   className="w-full rounded-xl border px-4 py-3"
                 />
               </section>
@@ -313,7 +337,7 @@ const filteredUpazilas = upazilas.filter(
                 className="w-full h-14 bg-gradient-to-r from-rose-500 to-rose-700 text-white rounded-xl text-lg flex items-center justify-center gap-2"
               >
                 <Send className="w-5 h-5" />
-                Submit Donation Request
+                Update Donation Request
               </button>
 
             </form>
@@ -321,6 +345,6 @@ const filteredUpazilas = upazilas.filter(
         </div>
       </motion.div>
     </div>
-  );
-};
-export default CreateDonationRequest;
+  
+  )
+}

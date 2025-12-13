@@ -11,6 +11,7 @@ import { MyDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/My
 import { DonarProfile } from "../src/Pages/DashboardPages/DonorDashboard/DonarProfile";
 import { DonorProfileDashboard } from "../src/Pages/DashboardPages/DonorDashboard/DonorProfileDashboard";
 import { LocationLoader } from "./LocationLoader";
+import { EditDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/EditDonationRequest";
 
 
 
@@ -64,6 +65,11 @@ export const  Router = createBrowserRouter([
 ,{
   path:"donorProfileDashboard",
   Component:DonorProfileDashboard
+},
+{
+  path:"editDonationRequest/:id",
+  Component:EditDonationRequest,
+   loader:LocationLoader,
 }
       ]
 }
