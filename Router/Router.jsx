@@ -10,6 +10,7 @@ import CreateDonationRequest from "../src/Pages/DashboardPages/DonorDashboard/Cr
 import { MyDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/MyDonationRequest";
 import { DonarProfile } from "../src/Pages/DashboardPages/DonorDashboard/DonarProfile";
 import { DonorProfileDashboard } from "../src/Pages/DashboardPages/DonorDashboard/DonorProfileDashboard";
+import { LocationLoader } from "./LocationLoader";
 
 
 
@@ -48,7 +49,8 @@ export const  Router = createBrowserRouter([
   children:[
        {
   path:"createDonationRequest",
-  Component:CreateDonationRequest
+  Component:CreateDonationRequest,
+  loader:LocationLoader,
 },
 {
   path:"myDonationRequest",
@@ -56,7 +58,8 @@ export const  Router = createBrowserRouter([
 },
 {
   path:"profile",
-  Component:DonarProfile
+  Component:DonarProfile,
+   loader:LocationLoader,
 }
 ,{
   path:"donorProfileDashboard",

@@ -52,7 +52,9 @@ const authInfo ={
     createUser,
     logOut,
     user,
-    updateUserProfile
+    updateUserProfile,
+    loading
+    
 }
 
 

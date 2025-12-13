@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import {
   User,
   Droplet,
@@ -9,15 +9,76 @@ import {
 } from "lucide-react";
 import { use } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
+import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
+import { useLoaderData } from "react-router";
 
 const CreateDonationRequest =()=> {
-   const {user,  updateUserProfile}=use(AuthContext)
 
-  const { register, handleSubmit } = useForm();
+   const {user, loading}=use(AuthContext)
 
-  const handleRequest = (data) => {
-    console.log("Donation Request Data:", data);
+if (loading) {
+  return <div className="text-center py-10">Loading...</div>;
+}
+
+const axiosSecure = UseAxiosSecure()  
+const handleRequest = async (data,user) => {
+
+    const districtName =
+  districts.find((d) => d.id === data.district)?.name;
+
+const upazilaName =
+  upazilas.find((u) => u.id === data.upazila)?.name;
+
+  const donationRequest = {
+    requesterName: user.displayName,
+    requesterEmail: user.email,
+
+    recipientName: data.recipientName,
+    district: districtName,
+    upazila: upazilaName,
+
+    hospitalName: data.hospitalName,
+    hospitalAddress: data.hospitalAddress,
+
+    bloodGroup: data.bloodGroup,
+    donationDate: data.donationDate,
+    donationTime: data.donationTime,
+
+    message: data.message,
+
+    status: "pending",
+    createdAt: new Date(),
   };
+
+  try {
+    const res = await axiosSecure.post(
+      "/donationrequests",
+      donationRequest
+    );
+    console.log("Request saved:", res.data);
+  } catch (error) {
+    console.error("Failed to create donation request", error);
+  }
+};
+
+
+
+
+const { districts, upazilas } = useLoaderData();
+
+const {
+  register,
+  handleSubmit,
+  control,
+} = useForm();
+const selectedDistrictId = useWatch({
+  control,
+  name: "district",
+});
+const filteredUpazilas = upazilas.filter(
+  (u) => u.district_id === selectedDistrictId
+);
+
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -95,15 +156,18 @@ const CreateDonationRequest =()=> {
                     <label class="block text-sm font-medium text-gray-700">
                       District <span class="text-rose-500">*</span>
                     </label>
-                    <select
-                      {...register("district")}
-                      class="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm text-gray-600
-                             focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-400"
-                    >
-                      <option>Select district</option>
-                      <option>Dhaka</option>
-                      <option>Chattogram</option>
-                    </select>
+                   <select
+  {...register("district")}
+  className="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm text-gray-600"
+>
+  <option value="">Select district</option>
+  {districts.map((d) => (
+    <option key={d.id} value={d.id}>
+      {d.name}
+    </option>
+  ))}
+</select>
+
                   </div>
 
                   <div class="space-y-2">
@@ -111,12 +175,26 @@ const CreateDonationRequest =()=> {
                       Upazila <span class="text-rose-500">*</span>
                     </label>
                     <select
-                      disabled
-                      {...register("upazila")}
-                      class="w-full h-12 rounded-xl border border-gray-200 px-4 text-sm text-gray-400 bg-gray-50 cursor-not-allowed"
-                    >
-                      <option>Select district first</option>
-                    </select>
+  {...register("upazila")}
+  disabled={!selectedDistrictId}
+  className={`w-full h-12 rounded-xl border px-4 text-sm
+    ${
+      selectedDistrictId
+        ? "border-gray-200 bg-white"
+        : "bg-gray-100 text-gray-400 cursor-not-allowed"
+    }`}
+>
+  <option value="">
+    {selectedDistrictId ? "Select upazila" : "Select district first"}
+  </option>
+
+  {filteredUpazilas.map((u) => (
+    <option key={u.id} value={u.id}>
+      {u.name}
+    </option>
+  ))}
+</select>
+
                   </div>
                 </div>
               </section>
