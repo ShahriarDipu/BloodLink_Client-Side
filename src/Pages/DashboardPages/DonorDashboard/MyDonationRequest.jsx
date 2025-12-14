@@ -1,13 +1,16 @@
 import { Droplet, MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../Context/AuthContext";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 
-const LIMIT = 5;
+
+const LIMIT = 7;
 
 export const MyDonationRequest = () => {
+  const queryClient = useQueryClient();
+
   const axiosSecure = UseAxiosSecure();
   const { user, loading } = useContext(AuthContext);
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -37,9 +40,38 @@ export const MyDonationRequest = () => {
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
 
-  const handleDelete =(data)=>{
-    console.log(data)
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this donation request?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await axiosSecure.delete(`/donationrequests/${id}`);
+
+    // Close dropdown
+    setOpenMenuId(null);
+
+    // Refresh list
+    queryClient.invalidateQueries([
+      "myDonationRequests",
+      user?.email,
+      statusFilter,
+      currentPage,
+    ]);
+  } catch (error) {
+    console.error("Delete failed", error);
+    alert("Failed to delete request");
   }
+};
+
+
+
+
+
+
+
   // Reset page when filter changes
   useEffect(() => {
     setCurrentPage(1);
@@ -92,8 +124,8 @@ export const MyDonationRequest = () => {
       ) : (
         <>
           {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full border rounded-xl overflow-hidden">
+          <div >
+            <table className="w-full  rounded-xl ">
               <thead className="bg-gray-50 text-sm text-gray-600">
                 <tr>
                   <th className="p-3 text-left">Recipient</th>
@@ -106,76 +138,73 @@ export const MyDonationRequest = () => {
                 </tr>
               </thead>
 
-            <tbody>
-  {requests.map((req) => (
-    <tr key={req._id} className="border-t text-sm relative">
-      <td className="p-3 font-medium">{req.recipientName}</td>
+    <tbody>
+  {requests.map((req, index) => {
+    const isLastRow = index === requests.length - 1;
 
-      <td className="p-3">
-        {req.district}, {req.upazila}
-      </td>
+    return (
+      <tr key={req._id} className="border-t text-sm">
+        <td className="p-3 font-medium">{req.recipientName}</td>
 
-      <td className="p-3">{req.bloodGroup}</td>
+        <td className="p-3">
+          {req.district}, {req.upazila}
+        </td>
 
-      <td className="p-3">
-        {req.donationDate} {req.donationTime}
-      </td>
+        <td className="p-3">{req.bloodGroup}</td>
 
-      <td className="p-3">
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-medium
-            ${
-              req.status === "pending"
-                ? "bg-yellow-100 text-yellow-700"
-                : req.status === "inprogress"
-                ? "bg-blue-100 text-blue-700"
-                : req.status === "done"
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
-            }`}
-        >
-          {req.status}
-        </span>
-      </td>
+        <td className="p-3">
+          {req.donationDate} {req.donationTime}
+        </td>
 
-      {/* 🔹 Actions */}
-      <td className="p-3 text-right relative">
-        <button
-          onClick={() =>
-            setOpenMenuId(openMenuId === req._id ? null : req._id)
-          }
-          className="p-2 rounded-full hover:bg-gray-100"
-        >
-          <MoreVertical className="w-5 h-5" />
-        </button>
+        <td className="p-3">
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium
+              ${
+                req.status === "pending"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : req.status === "inprogress"
+                  ? "bg-blue-100 text-blue-700"
+                  : req.status === "done"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+          >
+            {req.status}
+          </span>
+        </td>
 
-        {/* Dropdown */}
-        {openMenuId === req._id && (
-          <div className="absolute right-3 top-10 w-36 bg-white  rounded-xl shadow-lg z-10">
-            <Link
-              to={`/donorDashboard/editDonationRequest/${req._id}`}
-              className="flex items-center gap-2 px-4 py-2 rounded-sm text-sm hover:bg-gray-100"
-            >
-              <Pencil className="w-4 h-4" />
-              Edit
-            </Link>
+        {/* Actions */}
+       <td className="p-3 text-right">
+  <select
+    defaultValue=""
+    onChange={(e) => {
+      const action = e.target.value;
 
-            <button
-              onClick={() => handleDelete(req._id)
-        
-                
-              }
+      if (action === "edit") {
+        window.location.href = `/donorDashboard/editDonationRequest/${req._id}`;
+      }
 
-              className="flex items-center gap-2 w-full px-4 rounded-sm py-2 text-sm text-red-600 hover:bg-gray-100"
-            >
-              <Trash2 className="w-4 h-4" />
-              Delete
-            </button>
-          </div>
-        )}
-      </td>
-    </tr>
-  ))}
+      if (action === "delete") {
+        handleDelete(req._id);
+      }
+
+      // reset select back to placeholder
+      e.target.value = "";
+    }}
+   className="appearance-none select w-30
+            "
+  >
+    <option value="" disabled>
+      Actions
+    </option>
+    <option value="edit">✏️ Edit</option>
+    <option value="delete">🗑️ Delete</option>
+  </select>
+</td>
+
+      </tr>
+    );
+  })}
 </tbody>
 
             </table>

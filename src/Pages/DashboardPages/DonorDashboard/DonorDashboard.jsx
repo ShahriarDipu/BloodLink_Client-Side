@@ -136,7 +136,7 @@ const { data: userData, isLoading } = useQuery({
           </NavLink>
 
           <NavLink
-            to="/donorDashboard/funding"
+            to="/donorDashboard/donorFunding"
              className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
                 isActive
