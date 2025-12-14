@@ -72,6 +72,15 @@ const  updateStatusMutation = useMutation({
 
 
 
+const updateRoleMutation = useMutation({
+  mutationFn: async ({ id, role }) => {
+    return axiosSecure.patch(`/donors/role/${id}`, { role });
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries(["users"]);
+    setOpenId(null);
+  },
+});
 
 
 
@@ -242,16 +251,66 @@ const  updateStatusMutation = useMutation({
 
 
 
+{/* ADMIN ROLE TOGGLE */}
+{user.role !== "admin" ? (
+  <button
+    disabled={updateRoleMutation.isLoading}
+    onClick={() =>
+      updateRoleMutation.mutate({
+        id: user._id,
+        role: "admin",
+      })
+    }
+    className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+  >
+    <UserCog className="w-4 h-4 text-amber-600" />
+    Make Admin
+  </button>
+) : (
+  <button
+    disabled={updateRoleMutation.isLoading}
+    onClick={() =>
+      updateRoleMutation.mutate({
+        id: user._id,
+        role: "donor", // or "volunteer" if you prefer
+      })
+    }
+    className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+  >
+    <User2 className="w-4 h-4 text-gray-600" />
+    Remove Admin
+  </button>
+)}
 
-      <button className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100">
-        <UserCog className="w-4 h-4 text-amber-600" />
-        Make Admin
-      </button>
-
-      <button className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100">
-        <UserCheck className="w-4 h-4 text-emerald-600" />
-        Make Volunteer
-      </button>
+{user.role !== "volunteer" ? (
+  <button
+    disabled={updateRoleMutation.isLoading}
+    onClick={() =>
+      updateRoleMutation.mutate({
+        id: user._id,
+        role: "volunteer",
+      })
+    }
+    className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+  >
+    <UserCog className="w-4 h-4 text-amber-600" />
+    Make Volunteer
+  </button>
+) : (
+  <button
+    disabled={updateRoleMutation.isLoading}
+    onClick={() =>
+      updateRoleMutation.mutate({
+        id: user._id,
+        role: "donor", // or "volunteer" if you prefer
+      })
+    }
+    className="flex w-full items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100"
+  >
+    <User2 className="w-4 h-4 text-gray-600" />
+    Remove Volunteer
+  </button>
+)}
     </div>
   )}
 </td>
