@@ -65,8 +65,11 @@ const handleLogin=(data)=>{
 
 const handleRegister=(data)=>{
     const profileImg = data.photo[0];
-  const role= "donor"
+  const role= "Donor"
+  const status="Active"
+  data.status=status;
 data.role=role;
+
 console.log(data)
 createUser(data.email,data.password)
 
@@ -124,7 +127,8 @@ const donorInfo ={
    bloodGroup:data.bloodGroup,
    district:districtName,
    upazila:upazilaName,
-   role:"donor",
+   status:"Active",
+   role:"Donor",
    createdAt: new Date()
 }
 

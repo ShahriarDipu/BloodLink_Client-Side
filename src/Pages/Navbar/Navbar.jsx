@@ -133,7 +133,7 @@ const handleDashboard = () => {
 
   if (role === "admin") {
     console.log("Navigating to ADMIN dashboard");
-    navigate("/dashboard/admin");
+    navigate("adminDashboard");
   } 
   else if (role === "volunteer") {
     console.log("Navigating to VOLUNTEER dashboard");

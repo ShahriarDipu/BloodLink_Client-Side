@@ -136,6 +136,9 @@ const handleSaveChanges = async () => {
     console.error("Update failed", error);
   }
 };
+    const firstLetter =
+  user?.displayName?.charAt(0)?.toUpperCase() ||
+  user?.email?.charAt(0)?.toUpperCase();
 
 
   return (
@@ -158,7 +161,7 @@ const handleSaveChanges = async () => {
           <div className="flex items-center gap-5">
             {/* Avatar */}
             <div className="w-20 h-20 rounded-2xl bg-white/20 border-4 border-white flex items-center justify-center text-white text-3xl font-bold">
-              S
+              {firstLetter}
             </div>
 
             {/* User Info */}

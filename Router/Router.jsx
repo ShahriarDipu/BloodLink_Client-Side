@@ -13,6 +13,10 @@ import { DonorProfileDashboard } from "../src/Pages/DashboardPages/DonorDashboar
 import { LocationLoader } from "./LocationLoader";
 import { EditDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/EditDonationRequest";
 import { DonorFunding } from "../src/Pages/DashboardPages/DonorDashboard/DonorFunding";
+import { adminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/adminDashboard";
+import { AllUsers } from "../src/Pages/DashboardPages/AdminDashboard/AllUsers";
+import { AllDonationRequests } from "../src/Pages/DashboardPages/AdminDashboard/AllDonationRequests";
+import { ContentManagement } from "../src/Pages/DashboardPages/AdminDashboard/ContentManagement";
 
 
 
@@ -79,6 +83,31 @@ export const  Router = createBrowserRouter([
 }
       ]
 },
+{
+  path:"adminDashboard",
+  Component:adminDashboard,
+  children:[
+       {
+  path:"adminprofile",
+  Component:DonarProfile,
+  loader:LocationLoader,
+},
 
+{
+   path:"allUsers",
+  Component:AllUsers,
+
+},
+{
+  path:"allDonationRequest",
+  Component:AllDonationRequests,
+  
+},
+{
+  path:"contentManagement",
+  Component:ContentManagement,
+}
+  ]
+}
 
 ]);
