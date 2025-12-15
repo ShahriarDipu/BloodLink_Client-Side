@@ -56,18 +56,18 @@ const logo =<>
 const links=<>
  <div className="grid grid-cols-1 sm:flex">
    <li>
- <NavLink>
+ <NavLink to="/">
   Home
  </NavLink>
   </li>
 <li>
-   <NavLink>
+   <NavLink to="/donationRequests">
    Donation Requests
  </NavLink>
 
 </li>
 <li>
-   <NavLink to="searchDonors">
+   <NavLink to="/searchDonors">
  Search Donors
  </NavLink>
 
@@ -100,7 +100,7 @@ const handleLogOut =()=>{
 
   const navigate = useNavigate();
 
-const { data: userData, isLoading } = useQuery({
+const { data: userData,isLoading: roleLoading, isLoading } = useQuery({
   queryKey: ["donorRole", user?.email],
   queryFn: async () => {
     const res = await axiosSecure.get("/donors/role", {
@@ -111,6 +111,8 @@ const { data: userData, isLoading } = useQuery({
     return res.data;
   },
   enabled: !!user?.email,
+  refetchOnWindowFocus: true,
+
 });
 
 
@@ -122,7 +124,7 @@ const handleDashboard = () => {
     console.log("No user found → redirecting to login");
     return navigate("/login");
   }
-
+ if (roleLoading) return;
   if (isLoading) {
     console.log("User role is still loading… Please wait");
     return; // prevent navigation before DB role loads

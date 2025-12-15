@@ -39,9 +39,28 @@ export const DonorProfileDashboard = () => {
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
 
-  const handleDelete =(data)=>{
-    console.log(data)
+ const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this donation request?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    await axiosSecure.delete(`/donationrequests/${id}`);
+
+    queryClient.invalidateQueries([
+      "myDonationRequests",
+      user?.email,
+      statusFilter,
+      currentPage,
+    ]);
+  } catch (error) {
+    console.error("Delete failed", error);
+    alert("Failed to delete request");
   }
+};
+
   // Reset page when filter changes
   useEffect(() => {
     setCurrentPage(1);
@@ -121,106 +140,92 @@ export const DonorProfileDashboard = () => {
                   <th className="p-3">Blood</th>
                   <th className="p-3">Date</th>
                   <th className="p-3">Status</th>
+                  <th className="p-3">Type</th>
                   <th className="p-3 text-right">Actions</th>
 
                 </tr>
               </thead>
 
-       <tbody>
-  {requests.map((req, index) => {
-    const isLastRow = index === requests.length - 1;
-    const queryClient = useQueryClient();
+    <tbody>
+  {requests.map((req) => (
+    <tr key={req._id} className="border-t text-sm">
+      <td className="p-3 font-medium">{req.recipientName}</td>
 
-    const handleDelete = async (id) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this donation request?"
-  );
+      <td className="p-3">
+        {req.district}, {req.upazila}
+      </td>
 
-  if (!confirmDelete) return;
+      <td className="p-3">{req.bloodGroup}</td>
 
-  try {
-    await axiosSecure.delete(`/donationrequests/${id}`);
+      <td className="p-3">
+        {req.donationDate} {req.donationTime}
+      </td>
 
-    // Close dropdown
-    setOpenMenuId(null);
+      <td className="p-3">
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium
+            ${
+              req.status === "pending"
+                ? "bg-yellow-100 text-yellow-700"
+                : req.status === "inprogress"
+                ? "bg-blue-100 text-blue-700"
+                : req.status === "done"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+        >
+          {req.status}
+        </span>
+      </td>
 
-    // Refresh list
-    queryClient.invalidateQueries([
-      "myDonationRequests",
-      user?.email,
-      statusFilter,
-      currentPage,
-    ]);
-  } catch (error) {
-    console.error("Delete failed", error);
-    alert("Failed to delete request");
-  }
-};
-
-    return (
-      <tr key={req._id} className="border-t text-sm">
-        <td className="p-3 font-medium">{req.recipientName}</td>
-
-        <td className="p-3">
-          {req.district}, {req.upazila}
-        </td>
-
-        <td className="p-3">{req.bloodGroup}</td>
-
-        <td className="p-3">
-          {req.donationDate} {req.donationTime}
-        </td>
-
-        <td className="p-3">
-          <span
-            className={`px-3 py-1 rounded-full text-xs font-medium
-              ${
-                req.status === "pending"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : req.status === "inprogress"
-                  ? "bg-blue-100 text-blue-700"
-                  : req.status === "done"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-          >
-            {req.status}
+      {/* Type */}
+      <td className="p-3">
+        {req.requesterEmail === user.email ? (
+          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+            Created by me
           </span>
-        </td>
+        ) : (
+          <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+            Donated by me
+          </span>
+        )}
+      </td>
 
-        {/* Actions */}
-       <td className="p-3 text-right">
-  <select
-    defaultValue=""
-    onChange={(e) => {
-      const action = e.target.value;
+      {/* Actions */}
+      <td className="p-3 text-right">
+        <select
+          defaultValue=""
+          onChange={(e) => {
+            const action = e.target.value;
 
-      if (action === "edit") {
-        window.location.href = `/donorDashboard/editDonationRequest/${req._id}`;
-      }
+            if (action === "edit") {
+              window.location.href = `/donorDashboard/editDonationRequest/${req._id}`;
+            }
 
-      if (action === "delete") {
-        handleDelete(req._id);
-      }
+            if (action === "delete") {
+              handleDelete(req._id);
+            }
 
-      // reset select back to placeholder
-      e.target.value = "";
-    }}
-   className="appearance-none select w-30
-            "
-  >
-    <option value="" disabled>
-      Actions
-    </option>
-    <option value="edit">✏️ Edit</option>
-    <option value="delete">🗑️ Delete</option>
-  </select>
-</td>
-
-      </tr>
-    );
-  })}
+            e.target.value = "";
+          }}
+          className="select w-32"
+        >
+          <option value="" disabled>
+            Actions
+          </option>
+          <option value="edit">✏️ Edit</option>
+          <option
+            value="delete"
+            disabled={req.requesterEmail !== user.email}
+          >
+            🗑️ Delete
+          </option>
+        </select>
+      </td>
+    </tr>
+  ))}
 </tbody>
+
             </table>
           </div>
 

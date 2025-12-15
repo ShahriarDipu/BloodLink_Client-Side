@@ -17,6 +17,8 @@ import { adminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/admin
 import { AllUsers } from "../src/Pages/DashboardPages/AdminDashboard/AllUsers";
 import { AllDonationRequests } from "../src/Pages/DashboardPages/AdminDashboard/AllDonationRequests";
 import { ContentManagement } from "../src/Pages/DashboardPages/AdminDashboard/ContentManagement";
+import { DonationRequests } from "../src/Pages/PublicPages/DonationRequests";
+import { donationRequestDetails } from "../src/Pages/PublicPages/donationRequestDetails";
 
 
 
@@ -38,7 +40,15 @@ export const  Router = createBrowserRouter([
   },
 {path:"dashboard", Component:DashBoard},
 {
-  path:"searchDonors",
+path:"/donationRequests",
+Component:DonationRequests
+},
+{
+  path:"/donationRequestDetails/:id",
+  Component:donationRequestDetails
+},
+{
+  path:"/searchDonors",
   Component:SearchDonors,
   loader:async ()=> {
       const districts = await fetch("/districts.json").then(res => res.json());
@@ -49,6 +59,7 @@ export const  Router = createBrowserRouter([
 
     }
 },
+
 {
   path:"donorDashboard",
   Component:DonorDashboard,

@@ -11,18 +11,39 @@ import { use } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 import { useLoaderData } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 
 const CreateDonationRequest =()=> {
 
-   const {user, loading}=use(AuthContext)
 
-if (loading) {
-  return <div className="text-center py-10">Loading...</div>;
-}
+
+
+
+   const {user, loading}=use(AuthContext)
+const axiosSecure = UseAxiosSecure();
+
+const { data: dbUser, isLoading: statusLoading } = useQuery({
+  queryKey: ["userStatus", user?.email],
+  queryFn: async () => {
+    const res = await axiosSecure.get("/donors/by-email", {
+      params: { email: user.email },
+    });
+    return res.data;
+  },
+  enabled: !!user?.email,
+   refetchInterval: 2000,
+});
+
+
+
+
+
+
+
 
 console.log(user)
 
-const axiosSecure = UseAxiosSecure()  
+
 const handleRequest = async (data) => {
  if (!user) {
     console.log("no user")
@@ -84,6 +105,25 @@ const filteredUpazilas = upazilas.filter(
   (u) => u.district_id === selectedDistrictId
 );
 
+
+if (loading || statusLoading) {
+  return <div className="text-center py-10">Loading...</div>;
+}
+
+
+if (dbUser?.status === "blocked") {
+  return (
+    <div className="max-w-xl mx-auto mt-20 text-center bg-red-50 border border-red-200 rounded-2xl p-8">
+      <h2 className="text-xl font-bold text-red-600 mb-3">
+        Account Blocked
+      </h2>
+      <p className="text-gray-600">
+        Your account has been blocked. You cannot create donation requests.
+        Please contact the administrator.
+      </p>
+    </div>
+  );
+}
 
   return (
     <div className="max-w-3xl mx-auto">

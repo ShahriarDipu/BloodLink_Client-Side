@@ -4,7 +4,8 @@ import { useLoaderData } from "react-router";
 import { useForm, useWatch} from "react-hook-form"
 import { option } from "motion/react-client";
 import { UseAxiosSecure } from "../../Hooks/UseAxiosSecure";
-
+import { Footer } from "../Homepage/NavbarFooterSection/Footer";
+import { Navbar } from "../Navbar/Navbar";
 
 
 const SearchDonors = () => {
@@ -55,6 +56,7 @@ const handleSearch= (data)=>{
 
   return (
   <div>
+    <Navbar></Navbar>
     <form onSubmit={handleSubmit(handleSearch)}>
     <div className="min-h-11/12 w-full bg-gradient-to-b from-rose-600 to-rose-800 flex flex-col items-center text-white py-20 px-4">
 
@@ -71,7 +73,7 @@ const handleSearch= (data)=>{
       </p>
 
       {/* Search Card */}
-      <div className="w-full max-w-5xl bg-white rounded-2xl shadow-2xl p-6 text-gray-700">
+      <div className="w-16/17 bg-white rounded-2xl shadow-2xl p-6 text-gray-700">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 
           {/* Blood Group */}
@@ -145,6 +147,25 @@ const handleSearch= (data)=>{
     </div>
     </form>
     {/* Loading State */}
+    <div className="mb-10">
+
+      {/* Default State (before search) */}
+{!searched && !loading && (
+  <div className="flex flex-col items-center py-20 text-gray-600">
+    <div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mb-4">
+      <Search className="w-8 h-8 text-rose-600" />
+    </div>
+
+    <h2 className="text-2xl font-bold text-gray-800 mb-2">
+      Search for Donors
+    </h2>
+
+    <p className="text-gray-500 text-center max-w-md">
+      Use the search form above to find blood donors based on blood group and location.
+    </p>
+  </div>
+)}
+
 {loading && (
   <div className="flex flex-col items-center py-20 text-gray-600">
     <span className="loading loading-spinner loading-lg text-rose-600"></span>
@@ -165,7 +186,7 @@ const handleSearch= (data)=>{
 
     {/* Donor Cards */}
     {!loading && searchResult.length > 0 && (
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+  <div className="w-15/17 mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
     {searchResult.map((donor) => (
      <div
   key={donor._id}
@@ -193,26 +214,14 @@ const handleSearch= (data)=>{
       <MapPin className="w-4 h-4 text-rose-600" />
       <span>{donor.district}, {donor.upazila}</span>
     </div>
-
-    {/* Last Donation Date */}
-    {/* <div className="flex items-center gap-2 text-gray-700 text-sm mb-2">
-      <Calendar className="w-4 h-4 text-rose-600" />
-      <span>{donor.lastDonationDate ? donor.lastDonationDate : "Not available"}</span>
-    </div> */}
-
-    {/* Available Time */}
-    {/* <div className="flex items-center gap-2 text-gray-700 text-sm">
-      <Clock className="w-4 h-4 text-rose-600" />
-      <span>{donor.availableTime ? donor.availableTime : "Anytime"}</span>
-    </div> */}
-
   </div>
 </div>
 
     ))}
   </div>
 )}
-
+</div>
+<Footer></Footer>
     </div>
   );
 };
