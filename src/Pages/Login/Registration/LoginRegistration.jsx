@@ -16,6 +16,7 @@ const LoginRegistration = () => {
  const navigate = useNavigate();
   const{createUser, signInUser,updateUserProfile }=use(AuthContext)
 
+const [registerSuccess, setRegisterSuccess] = useState("");
 
   const {fullDistrict, fullUpazila}=useLoaderData()
 
@@ -24,6 +25,8 @@ const LoginRegistration = () => {
    const {
     register,
     handleSubmit,
+    watch,
+    reset,
     control,
     formState: { errors },
   } = useForm();
@@ -65,7 +68,7 @@ const handleLogin=(data)=>{
 
 const handleRegister=(data)=>{
     const profileImg = data.photo[0];
-  const role= "Donor"
+  const role= "donor"
   const status="Active"
   data.status=status;
 data.role=role;
@@ -134,7 +137,14 @@ const donorInfo ={
 
  axiosSecure.post('/donors',donorInfo)
   .then(res=>{
-    console.log('Successfully send to database')
+   setRegisterSuccess("Account created successfully!");
+   setTimeout(() => {
+  setActiveTab("login");  
+      setRegisterSuccess(""); 
+      reset(); 
+}, 1500);
+reset();
+
   })
 }
 
@@ -272,7 +282,7 @@ const donorInfo ={
           <path d="M22 6l-10 7L2 6" />
         </svg>
       </span>
-
+{/* email can not be uppercase */}
       <input
          {...register('email')}
         type="email"
@@ -360,26 +370,41 @@ const donorInfo ={
   </div>
 
   {/* Password */}
-  <div>
-    <label className="block mb-1 font-light">Password</label>
-    <div className="relative">
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path d="M12 17a2 2 0 100-4 2 2 0 000 4z" />
-          <path d="M19 11V7a7 7 0 10-14 0v4H5v10h14V11z" />
-        </svg>
-      </span>
+ <input
+  type="password"
+  {...register("password", {
+    required: "Password is required",
+    minLength: {
+      value: 6,
+      message: "Password must be at least 6 characters",
+    },
+  })}
+  placeholder="Create a password"
+  className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
+  focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
+/>
 
-      <input
-        type="password"
-        {...register('password')}
-        placeholder="Create a password"
-        className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
-        focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
-      />
-    </div>
-  </div>
+{errors.password && (
+  <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+)}
 
+<input
+  type="password"
+  {...register("confirmPassword", {
+    required: "Confirm password is required",
+    validate: (value) =>
+      value === watch("password") || "Passwords do not match",
+  })}
+  placeholder="Confirm password"
+  className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
+  focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
+/>
+
+{errors.confirmPassword && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.confirmPassword.message}
+  </p>
+)}
 
   {/* Submit Button */}
   <button
@@ -388,6 +413,12 @@ const donorInfo ={
   >
     Create Account
   </button>
+  {registerSuccess && (
+  <div className="bg-green-100 text-green-700 p-3 rounded-lg text-center font-medium">
+    {registerSuccess}
+  </div>
+)}
+
 </form>
 
           )}

@@ -92,7 +92,13 @@ const {
 
 
   //location loader
-  const { districts, upazilas } = useLoaderData();
+ const loaderData = useLoaderData() || {};
+const { districts = [], upazilas = [] } = loaderData;
+
+if (!districts.length || !upazilas.length) {
+  return <div>Loading location data...</div>;
+}
+
   console.log(districts)
   const filteredUpazilas = upazilas.filter(
   (u) => u.district_id === selectedDistrict
@@ -272,6 +278,11 @@ const handleSaveChanges = async () => {
       <option value="A+">A+</option>
       <option value="B+">B+</option>
       <option value="O+">O+</option>
+       <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+         <option value="A-">A-</option>
+          <option value="B-">B-</option>
+                  <option value="O-">O-</option>
     </select>
   ) : (
     <div className="bg-gray-50 rounded-xl px-4 py-3 text-gray-800 text-sm">

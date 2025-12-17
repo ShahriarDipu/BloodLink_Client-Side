@@ -72,12 +72,7 @@ const links=<>
  </NavLink>
 
 </li>
-<li>
-   <NavLink>
-Funding
- </NavLink>
 
-</li>
  </div>
     
 </>
@@ -99,6 +94,8 @@ const handleLogOut =()=>{
 
 
   const navigate = useNavigate();
+ 
+
 
 const { data: userData,isLoading: roleLoading, isLoading } = useQuery({
   queryKey: ["donorRole", user?.email],
@@ -124,13 +121,13 @@ const handleDashboard = () => {
     console.log("No user found → redirecting to login");
     return navigate("/login");
   }
- if (roleLoading) return;
+//  if (roleLoading) return;
   if (isLoading) {
     console.log("User role is still loading… Please wait");
     return; // prevent navigation before DB role loads
   }
 
-  const role = userData?.role;
+  const role =userData?.role;
   console.log("Role fetched from DB:", role);
 
   if (role === "admin") {
@@ -139,7 +136,7 @@ const handleDashboard = () => {
   } 
   else if (role === "volunteer") {
     console.log("Navigating to VOLUNTEER dashboard");
-    navigate("/dashboard/volunteer");
+    navigate("volunteerDashboard");
   } 
   else {
     console.log("Navigating to DONOR dashboard");

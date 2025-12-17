@@ -48,7 +48,10 @@ const handleDelete = async (id) => {
   if (!confirmDelete) return;
 
   try {
-    await axiosSecure.delete(`/donationrequests/${id}`);
+   await axiosSecure.delete(`/donationrequests/${id}`, {
+  params: { email: user.email },
+});
+
 
     // Close dropdown
     setOpenMenuId(null);
@@ -81,6 +84,25 @@ const handleDelete = async (id) => {
   if (loading || isLoading) {
     return <div className="p-8 text-center">Loading...</div>;
   }
+
+  const handleStatusChange = async (id, newStatus) => {
+  try {
+    await axiosSecure.patch(`/donationrequests/status/${id}`, {
+      status: newStatus,
+      email: user.email,
+    });
+
+    queryClient.invalidateQueries([
+      "myDonationRequests",
+      user?.email,
+      statusFilter,
+      currentPage,
+    ]);
+  } catch (error) {
+    console.error("Status update failed", error);
+    alert("Failed to update status");
+  }
+};
 
   return (
     <div className="space-y-6">
@@ -174,7 +196,7 @@ const handleDelete = async (id) => {
         </td>
 
         {/* Actions */}
-       <td className="p-3 text-right">
+<td className="p-3 text-right">
   <select
     defaultValue=""
     onChange={(e) => {
@@ -188,17 +210,42 @@ const handleDelete = async (id) => {
         handleDelete(req._id);
       }
 
-      // reset select back to placeholder
+      if (action === "done") {
+        handleStatusChange(req._id, "done");
+      }
+
+      if (action === "cancel") {
+        handleStatusChange(req._id, "pending");
+      }
+
       e.target.value = "";
     }}
-   className="appearance-none select w-30
-            "
+    className="appearance-none select w-36"
   >
     <option value="" disabled>
       Actions
     </option>
-    <option value="edit">✏️ Edit</option>
-    <option value="delete">🗑️ Delete</option>
+
+    {/* Edit only for creator */}
+    <option value="edit"
+     disabled={req.requesterEmail !== user.email}
+    >✏️ Edit</option>
+
+    {/* Delete only for creator */}
+    <option
+      value="delete"
+      disabled={req.requesterEmail !== user.email}
+    >
+      🗑️ Delete
+    </option>
+
+    {/* Status actions ONLY when inprogress */}
+    {req.status === "inprogress" && req.donorEmail === user.email && (
+      <>
+        <option value="done">✅ Mark as Done</option>
+        <option value="cancel">❌ Cancel Donation</option>
+      </>
+    )}
   </select>
 </td>
 

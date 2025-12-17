@@ -1,3 +1,4 @@
+import React from 'react'
 import { Droplet, MoreVertical, Pencil, Plus, Send, Trash2 } from "lucide-react";
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router";
@@ -7,9 +8,8 @@ import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 import { motion } from 'framer-motion';
 
 const LIMIT = 4;
-
-export const DonorProfileDashboard = () => {
-const queryClient = useQueryClient();
+export const VolunteerWelcomePage = () => {
+    const queryClient = useQueryClient();
 
   const axiosSecure = UseAxiosSecure();
   const { user, loading } = useContext(AuthContext);
@@ -120,7 +120,7 @@ const queryClient = useQueryClient();
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-900">
-          Donar Dashboard
+        
         </h1>
 
   
@@ -162,7 +162,7 @@ const queryClient = useQueryClient();
                   <th className="p-3">Date</th>
                   <th className="p-3">Status</th>
                   <th className="p-3">Type</th>
-                  <th className="p-3 text-right">Actions</th>
+                  {/* <th className="p-3 text-right">Actions</th> */}
 
                 </tr>
               </thead>
@@ -213,58 +213,7 @@ const queryClient = useQueryClient();
       </td>
 
       {/* Actions */}
-      <td className="p-3 text-right">
-  <select
-    defaultValue=""
-    onChange={(e) => {
-      const action = e.target.value;
-
-      if (action === "edit") {
-        window.location.href = `/donorDashboard/editDonationRequest/${req._id}`;
-      }
-
-      if (action === "delete") {
-        handleDelete(req._id);
-      }
-
-      if (action === "done") {
-        handleStatusChange(req._id, "done");
-      }
-
-      if (action === "cancel") {
-        handleStatusChange(req._id, "pending");
-      }
-
-      e.target.value = "";
-    }}
-    className="appearance-none select w-36"
-  >
-    <option value="" disabled>
-      Actions
-    </option>
-
-    {/* Edit only for creator */}
-    <option value="edit"
-     disabled={req.requesterEmail !== user.email}
-    >✏️ Edit</option>
-
-    {/* Delete only for creator */}
-    <option
-      value="delete"
-      disabled={req.requesterEmail !== user.email}
-    >
-      🗑️ Delete
-    </option>
-
-    {/* Status actions ONLY when inprogress */}
-    {req.status === "inprogress" && req.donorEmail === user.email && (
-      <>
-        <option value="done">✅ Mark as Done</option>
-        <option value="cancel"> Cancel Donation</option>
-      </>
-    )}
-  </select>
-</td>
+   
     </tr>
   ))}
 </tbody>

@@ -19,6 +19,10 @@ import { AllDonationRequests } from "../src/Pages/DashboardPages/AdminDashboard/
 import { ContentManagement } from "../src/Pages/DashboardPages/AdminDashboard/ContentManagement";
 import { DonationRequests } from "../src/Pages/PublicPages/DonationRequests";
 import { donationRequestDetails } from "../src/Pages/PublicPages/donationRequestDetails";
+import { VolunteerDashbaord } from "../src/Pages/DashboardPages/VolunteerDashboard/volunteerDashbaord";
+import { VolunteerProfile } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerProfile";
+import { AllBloodDonation } from "../src/Pages/DashboardPages/VolunteerDashboard/AllBloodDonation";
+import { VolunteerWelcomePage } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerWelcomePage";
 
 
 
@@ -118,6 +122,30 @@ Component:DonationRequests
   path:"contentManagement",
   Component:ContentManagement,
 }
+  ]
+},
+{
+  path:"volunteerDashboard",
+  Component:VolunteerDashbaord,
+  children:[
+    {
+      path:"volunteerProfile",
+      Component:DonarProfile,
+      loader:LocationLoader,
+    },
+    {
+      path:"allBloodDonationRequest",
+      Component:AllBloodDonation,
+      loader:LocationLoader,
+    },
+    {
+      path:"volunteerWelcomePage",
+      Component:VolunteerWelcomePage
+    },
+    {
+      path:"volunteerFunding",
+      Component:DonorFunding
+    }
   ]
 }
 

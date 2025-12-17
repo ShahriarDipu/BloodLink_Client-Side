@@ -7,7 +7,8 @@ import { Droplet, MoreVertical } from "lucide-react";
 const ITEMS_PER_PAGE = 5;
 
 
-export const AllDonationRequests = () => {
+
+export const AllBloodDonation = () => {
 
 const axiosSecure = UseAxiosSecure();
   const queryClient = useQueryClient();
@@ -16,7 +17,7 @@ const axiosSecure = UseAxiosSecure();
   const [currentPage, setCurrentPage] = useState(1);
   const [openId, setOpenId] = useState(null);
 
-
+  // ✅ Fetch ALL donation requests (admin)
   const { data, isLoading } = useQuery({
     queryKey: ["allDonationRequests", statusFilter, currentPage],
     queryFn: async () => {
@@ -36,7 +37,7 @@ const axiosSecure = UseAxiosSecure();
   const total = data?.total || 0;
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
- 
+  // ✅ Update donation status
 const updateStatusMutation = useMutation({
   mutationFn: ({ id, status }) =>
     axiosSecure.patch(`/donationrequests/admin/status/${id}`, {
@@ -48,10 +49,9 @@ const updateStatusMutation = useMutation({
   },
 });
 
-
-
+  
   return (
-    <div>
+ <div>
  <div>
       <div className="flex mb-6 items-center justify-between">
         <h1 className="text-xl font-semibold">All Donation Requests</h1>
