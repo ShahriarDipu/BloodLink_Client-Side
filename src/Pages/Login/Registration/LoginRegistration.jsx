@@ -256,6 +256,12 @@ reset();
   {/* Full Name */}
   <div>
     <label className="block mb-1 font-light">Full Name</label>
+    {errors.fullName && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.fullName.message}
+  </p>
+)}
+
     <div className="relative">
       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -264,7 +270,7 @@ reset();
       </span>
 
       <input
-        type="text" {...register('fullName')}
+        type="text" {...register('fullName',{ required: "Name is required" })}
         placeholder="Enter your full name"
         className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
         focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
@@ -275,6 +281,12 @@ reset();
   {/* Email */}
   <div>
     <label className="block mb-1 font-light">Email Address</label>
+    {errors.email && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.email.message}
+  </p>
+)}
+
     <div className="relative">
       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -284,7 +296,7 @@ reset();
       </span>
 {/* email can not be uppercase */}
       <input
-         {...register('email')}
+         {...register('email',{ required: "Email is required" })}
         type="email"
         placeholder="Enter your email"
         className="w-full border border-rose-100 pl-10 pr-3 py-3 rounded-xl bg-gray-50
@@ -309,20 +321,31 @@ reset();
   </div>
 
   {/* Blood Group */}
-  <div>
-    <label className="block mb-1 font-light">Blood Group</label>
-    <select
-     {...register('bloodGroup')}
-      className="w-full border font-light border-rose-100 select rounded-xl bg-white
-      focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
-    >
-      <option>Select blood group</option>
-      <option>A+</option><option>A−</option>
-      <option>B+</option><option>B−</option>
-      <option>AB+</option><option>AB−</option>
-      <option>O+</option><option>O−</option>
-    </select>
-  </div>
+  <div> <label className="block mb-1 font-light">Blood Group</label>
+  {errors.bloodGroup && (
+  <p className="text-red-500 text-sm mt-1">
+    {errors.bloodGroup.message}
+  </p>
+)}
+
+<select
+  {...register("bloodGroup", {
+    required: "Blood group is required",
+  })}
+  className="w-full border font-light border-rose-100 select rounded-xl bg-white
+  focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
+>
+  <option value="">Select blood group</option>
+  <option value="A+">A+</option>
+  <option value="A-">A−</option>
+  <option value="B+">B+</option>
+  <option value="B-">B−</option>
+  <option value="AB+">AB+</option>
+  <option value="AB-">AB−</option>
+  <option value="O+">O+</option>
+  <option value="O-">O−</option>
+</select>
+</div>
 
   {/* District + Upazila */}
   <div className="grid grid-cols-2 gap-4">
@@ -330,7 +353,7 @@ reset();
     <div>
       <label className="block mb-1 font-light">District</label>
       <select
-      {...register('district')}
+      {...register('district',{ required: "District is required" })}
         className="select w-full border font-light border-rose-100 rounded-xl bg-white
         focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
       >
@@ -345,8 +368,8 @@ reset();
     <div>
       <label className="block mb-1 font-light">Upazila</label>
       <select
-      {...register('upazila')}
-   
+      {...register('upazila',{ required: " is required" })}
+        
         className={`w-full rounded-xl outline-none font-light select
         ${
          selectedDistrict
