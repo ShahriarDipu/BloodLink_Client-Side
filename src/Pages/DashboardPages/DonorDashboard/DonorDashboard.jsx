@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React, { use, useState } from "react";
 import { Link, Outlet, NavLink } from "react-router";
 import {
   Droplet,
@@ -7,6 +7,8 @@ import {
   User,
   LogOut,
   DollarSign,
+  Menu,
+  X,
 } from "lucide-react";
 import { AuthContext } from "../../../Context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +16,7 @@ import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 
 
 export const DonorDashboard = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const axiosSecure = UseAxiosSecure()  
   const {user}= use(AuthContext)
 const firstLetter = user?.displayName?.[0]?.toUpperCase() || "?";
@@ -34,12 +37,51 @@ const { data: userData, isLoading } = useQuery({
 
 
   return (
+    
     <div className="min-h-screen flex">
+      {/* Mobile Header */}
+<div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white flex items-center px-4  shadow z-50">
+  <button onClick={() => setIsSidebarOpen(true)}>
+    <Menu className="w-6 h-6 text-rose-600" />
+  </button>
+
+  <h1 className="ml-4 font-semibold text-rose-700">BloodLink</h1>
+</div>
+
+
+
+
+
+
+
+
       {/* Sidebar */}
-      <aside className="w-72 bg-gradient-to-b from-rose-700 to-rose-900 text-white flex flex-col px-5 py-6">
+    {/* Overlay (mobile) */}
+{isSidebarOpen && (
+  <div
+    onClick={() => setIsSidebarOpen(false)}
+    className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+  />
+)}
+
+{/* Sidebar */}
+<aside
+  className={`fixed lg:static top-0 left-0 z-50 h-full sm:h-screen w-72
+  bg-gradient-to-b from-rose-700 to-rose-900 text-white
+  transform transition-transform duration-300
+  ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+  lg:translate-x-0`}
+>
+<div className="flex items-center justify-between lg:hidden mb-6">
+  <span className="text-lg font-bold"></span>
+  <button onClick={() => setIsSidebarOpen(false)}>
+    <X className="w-6 h-6" />
+  </button>
+</div>
+
         
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center mt-7 ml-4 gap-3 mb-8">
           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
             <Droplet className="w-6 h-6 text-rose-600" />
           </div>
@@ -84,6 +126,7 @@ const { data: userData, isLoading } = useQuery({
 
           <NavLink
             to="/donorDashboard/profile"
+              onClick={() => setIsSidebarOpen(false)}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
                 isActive
@@ -162,9 +205,12 @@ const { data: userData, isLoading } = useQuery({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 bg-gray-50 p-6">
-        <Outlet />
-      </main>
+     <main className="flex-1 bg-gray-50 p-4 sm:p-6 pt-20 lg:pt-6">
+  <div className="max-w-6xl mx-auto w-full">
+    <Outlet />
+  </div>
+</main>
+
     </div>
   );
 };

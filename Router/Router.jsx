@@ -67,7 +67,12 @@ Component:DonationRequests
 {
   path:"donorDashboard",
   Component:DonorDashboard,
+
   children:[
+    {
+      index: true, 
+      Component:DonorProfileDashboard,
+    },
        {
   path:"createDonationRequest",
   Component:CreateDonationRequest,

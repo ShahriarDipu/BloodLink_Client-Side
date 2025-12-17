@@ -10,7 +10,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 import { AuthContext } from "../../../Context/AuthContext";
-import { useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { useForm ,useWatch} from "react-hook-form";
 
 
@@ -154,9 +154,9 @@ const handleSaveChanges = async () => {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-900">My Profile</h1>
-        <button className="text-sm text-gray-500 hover:text-gray-700">
+        <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
           ← Back to Home
-        </button>
+        </Link>
       </div>
 
       {/* Profile Card */}
