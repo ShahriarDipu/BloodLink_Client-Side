@@ -137,7 +137,7 @@ element:(<PrivateRoute><DonorFunding></DonorFunding></PrivateRoute>),
 },
 {
   path:"adminDashboard",
-  Component:adminDashboard,
+  element:(<PrivateRoute><adminDashboard></adminDashboard></PrivateRoute>),
   children:[
    
     {
@@ -172,7 +172,7 @@ Component:AdminProfileDashboard
 },
 {
   path:"volunteerDashboard",
-  Component:VolunteerDashboard,
+element:(<PrivateRoute><VolunteerDashboard></VolunteerDashboard></PrivateRoute>),
   children:[
 
     {
