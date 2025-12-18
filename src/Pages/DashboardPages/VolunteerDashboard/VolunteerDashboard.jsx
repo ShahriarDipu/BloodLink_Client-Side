@@ -5,7 +5,7 @@ import { ChartBar, DollarSign, Droplet, House, LogOut, Plus, User, User2, Users 
 import { UseAxiosSecure } from '../../../Hooks/UseAxiosSecure';
 import { AuthContext } from '../../../Context/AuthContext';
 
-export const VolunteerDashbaord = () => {
+export const VolunteerDashboard = () => {
     const axiosSecure = UseAxiosSecure()  
       const {user}= use(AuthContext)
     

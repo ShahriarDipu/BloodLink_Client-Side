@@ -166,7 +166,7 @@ const updateRoleMutation = useMutation({
         <td className="p-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-700 font-bold">
-              {user.fullName?.[0] || "U"}
+            <img src=  {user.profileUrl} alt="Profile Photo" />
             </div>
             <span className="font-medium">{user.fullName}</span>
           </div>

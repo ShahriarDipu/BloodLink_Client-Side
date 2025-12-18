@@ -1,7 +1,8 @@
 import React from 'react'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
+
 import { Phone,MapPin,Mail } from 'lucide-react'
-export const ContuctUsSection = () => {
+export default function ContuctUsSection ()  {
   return (
 <section className="py-24 bg-white" id="contact">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -13,17 +13,19 @@ import { DonorProfileDashboard } from "../src/Pages/DashboardPages/DonorDashboar
 import { LocationLoader } from "./LocationLoader";
 import { EditDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/EditDonationRequest";
 import { DonorFunding } from "../src/Pages/DashboardPages/DonorDashboard/DonorFunding";
-import { adminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/adminDashboard";
+import { adminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/AdminDashboard";
 import { AllUsers } from "../src/Pages/DashboardPages/AdminDashboard/AllUsers";
 import { AllDonationRequests } from "../src/Pages/DashboardPages/AdminDashboard/AllDonationRequests";
 import { ContentManagement } from "../src/Pages/DashboardPages/AdminDashboard/ContentManagement";
 import { DonationRequests } from "../src/Pages/PublicPages/DonationRequests";
 import { donationRequestDetails } from "../src/Pages/PublicPages/donationRequestDetails";
-import { VolunteerDashbaord } from "../src/Pages/DashboardPages/VolunteerDashboard/volunteerDashbaord";
+
 import { VolunteerProfile } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerProfile";
 import { AllBloodDonation } from "../src/Pages/DashboardPages/VolunteerDashboard/AllBloodDonation";
 import { VolunteerWelcomePage } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerWelcomePage";
 import { AdminProfileDashboard } from "../src/Pages/DashboardPages/AdminDashboard/AdminProfileDashboard";
+import { PrivateRoute } from "../src/routes/PrivateRoute";
+import { VolunteerDashboard } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerDashboard";
 
 
 
@@ -59,8 +61,8 @@ path:"/donationRequests",
 Component:DonationRequests
 },
 {
-  path:"/donationRequestDetails/:id",
-  Component:donationRequestDetails
+ path:"/donationRequestDetails/:id",
+Component:donationRequestDetails
 },
 
 {
@@ -89,8 +91,11 @@ Component:DonationRequests
 },
 {
   path:"donorDashboard",
-  Component:DonorDashboard,
-
+element:(<PrivateRoute>
+ <DonorDashboard></DonorDashboard>
+</PrivateRoute>
+)
+,
   children:[
     {
       index: true, 
@@ -125,7 +130,7 @@ Component:DonationRequests
 },
 {
   path:"donorFunding",
-  Component:DonorFunding,
+element:(<PrivateRoute><DonorFunding></DonorFunding></PrivateRoute>),
   loader:LocationLoader,
 }
       ]
@@ -167,7 +172,7 @@ Component:AdminProfileDashboard
 },
 {
   path:"volunteerDashboard",
-  Component:VolunteerDashbaord,
+  Component:VolunteerDashboard,
   children:[
 
     {
