@@ -44,7 +44,7 @@ const HeroSection = () => {
               <Link to="/loginRegister">
                 <li className="btn bg-gradient-to-r from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white px-8 py-6 text-lg rounded-2xl shadow-xl shadow-rose-200 hover:shadow-rose-300 transition-all duration-300">
                   <Heart className="w-5 h-5 mr-2" />
-                  Join as a Donor Man
+                  Join as a Donor
                 </li>
               </Link>
 
