@@ -4,7 +4,7 @@ import { ArrowRight, Calendar, Clock, Eye, Heart, MapPin } from 'lucide-react'
 import { UseAxiosSecure } from '../../Hooks/UseAxiosSecure'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
-import { Footer } from '../Homepage/NavbarFooterSection/Footer'
+import { Footer } from '../HomePage/NavbarFooterSection/Footer'
 import { Navbar } from '../Navbar/Navbar'
 export const DonationRequests = () => {
 

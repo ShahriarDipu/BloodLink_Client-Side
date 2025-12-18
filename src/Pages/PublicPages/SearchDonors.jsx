@@ -4,7 +4,7 @@ import { useLoaderData } from "react-router";
 import { useForm, useWatch} from "react-hook-form"
 import { option } from "motion/react-client";
 import { UseAxiosSecure } from "../../Hooks/UseAxiosSecure";
-import { Footer } from "../Homepage/NavbarFooterSection/Footer";
+import { Footer } from "../HomePage/NavbarFooterSection/Footer";
 import { Navbar } from "../Navbar/Navbar";
 
 
