@@ -4,7 +4,7 @@ import { AuthContext } from '../../../Context/AuthContext';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { UseAxiosSecure } from '../../../Hooks/UseAxiosSecure';
-import { useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 export const DonorFunding = () => {
 
@@ -109,6 +109,14 @@ const queryClient = useQueryClient();
 
   return (
     <div>
+           {/* Page Header */}
+      <div className="flex items-center justify-end mb-3">
+       
+        <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
+          ← Back to Home
+        </Link>
+      </div>
+
 
       {/* Stats */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">

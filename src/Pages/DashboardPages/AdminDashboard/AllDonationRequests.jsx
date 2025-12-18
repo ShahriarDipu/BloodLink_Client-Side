@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Link } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 import { Droplet, MoreVertical } from "lucide-react";
+import { useNavigate } from "react-router";
+import { AuthContext } from "../../../Context/AuthContext";
+import { DeleteConfirmModal } from "../DonorDashboard/DeleteConfirmModal";
 
 const ITEMS_PER_PAGE = 5;
 
 
 export const AllDonationRequests = () => {
+  const [deleteId, setDeleteId] = useState(null);
+
+  const { user } = use(AuthContext);
+
+const navigate = useNavigate();
 
 const axiosSecure = UseAxiosSecure();
   const queryClient = useQueryClient();
@@ -48,10 +56,35 @@ const updateStatusMutation = useMutation({
   },
 });
 
+const handleDelete = async () => {
+  try {
+    await axiosSecure.delete(`/donationrequests/${deleteId}`, {
+      params: { email: user.email },
+    });
+
+    setDeleteId(null);
+
+    queryClient.invalidateQueries([
+      "allDonationRequests",
+      statusFilter,
+      currentPage,
+    ]);
+  } catch (error) {
+    console.error("Delete failed", error);
+  }
+};
+
+const statusStyles = {
+  pending: "bg-yellow-100 text-yellow-700",
+  inprogress: "bg-blue-100 text-blue-700",
+  done: "bg-green-100 text-green-700",
+  canceled: "bg-red-100 text-red-700",
+};
 
 
   return (
     <div>
+      
  <div>
       <div className="flex mb-6 items-center justify-between">
         <h1 className="text-xl font-semibold">All Donation Requests</h1>
@@ -88,7 +121,8 @@ const updateStatusMutation = useMutation({
               <th className="p-3">Blood</th>
               <th className="p-3">Location</th>
               <th className="p-3">Requester</th>
-              <th className="p-3">Donor</th>
+              <th className="p-3">Donor Name</th>
+               <th className="p-3">Donor Email</th>
               <th className="p-3">Status</th>
               <th className="p-3 text-right">Actions</th>
             </tr>
@@ -122,53 +156,72 @@ const updateStatusMutation = useMutation({
                     {req.upazila}, {req.district}
                   </td>
 
-                  <td className="p-3">{req.requesterEmail}</td>
-                  <td className="p-3">{req.donorEmail || "-"}</td>
-
+                  <td className="p-3">{req.requesterName}</td>
+                  <td className="p-3">{req.donorName || "-"}</td>
+               <td className="p-3">{req.donorEmail || "-"}</td>
                   <td className="p-3">
-                    <span className="px-2 py-1 rounded text-xs bg-gray-100">
-                      {req.status}
-                    </span>
+                <span
+  className={`px-3 py-1 rounded-full text-xs font-medium capitalize
+    ${statusStyles[req.status] || "bg-gray-100 text-gray-600"}
+  `}
+>
+  {req.status}
+</span>
+
                   </td>
 
-                  <td className="p-3 text-right relative">
-                    <button
-                      onClick={() =>
-                        setOpenId(openId === req._id ? null : req._id)
-                      }
-                      className="p-2 hover:bg-gray-100 rounded"
-                    >
-                      <MoreVertical size={16} />
-                    </button>
+                  
+                  <td className="p-3 text-right">
+  <select
+    defaultValue=""
+    onChange={(e) => {
+      const action = e.target.value;
 
-                    {openId === req._id && req.status === "inprogress" && (
-                      <div className="absolute right-0 mt-2 w-40 bg-white border shadow rounded z-50">
-                        <button
-                          onClick={() =>
-                            updateStatusMutation.mutate({
-                              id: req._id,
-                              status: "done",
-                            })
-                          }
-                          className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                        >
-                          ✅ Mark Done
-                        </button>
+      if (action === "view") {
+        navigate(`/donorDashboard/viewDetails/${req._id}`);
+      }
 
-                        <button
-                          onClick={() =>
-                            updateStatusMutation.mutate({
-                              id: req._id,
-                              status: "pending",
-                            })
-                          }
-                          className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                        >
-                          ❌ Cancel
-                        </button>
-                      </div>
-                    )}
-                  </td>
+      if (action === "edit") {
+        navigate(`/donorDashboard/editDonationRequest/${req._id}`);
+      }
+
+      if (action === "delete") {
+   setDeleteId(req._id);
+      }
+
+      if (action === "done") {
+        updateStatusMutation.mutate({
+          id: req._id,
+          status: "done",
+        });
+      }
+
+      if (action === "cancel") {
+        updateStatusMutation.mutate({
+          id: req._id,
+          status: "canceled",
+        });
+      }
+
+      e.target.value = "";
+    }}
+    className="appearance-none select w-36"
+  >
+    <option value="" disabled>Actions</option>
+
+    <option value="view"> View Details</option>
+    <option value="edit"> Edit</option>
+    <option value="delete"> Delete</option>
+
+    {req.status === "inprogress" && (
+      <>
+        <option value="done"> Mark Done</option>
+        <option value="cancel"> Cancel</option>
+      </>
+    )}
+  </select>
+</td>
+
                 </tr>
               ))
             )}
@@ -201,6 +254,11 @@ const updateStatusMutation = useMutation({
       </div>
     </div>
 
+<DeleteConfirmModal
+  isOpen={!!deleteId}
+  onClose={() => setDeleteId(null)}
+  onConfirm={handleDelete}
+/>
 
 
 

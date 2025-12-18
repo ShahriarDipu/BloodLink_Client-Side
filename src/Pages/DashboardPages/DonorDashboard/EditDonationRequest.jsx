@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+
 import { useForm, useWatch } from "react-hook-form";
 import {
   User,
@@ -6,13 +6,17 @@ import {
   FileText,
   Send,
 } from "lucide-react";
-import { use, useContext, useEffect } from "react";
+import { use, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
-import { useParams, useLoaderData, useNavigate } from "react-router";
+import { useParams, useLoaderData, useNavigate, Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle } from "lucide-react";
 
 export const EditDonationRequest = () => {
+  const [isUpdating, setIsUpdating] = useState(false);
+const [isUpdated, setIsUpdated] = useState(false);
  const { id } = useParams();
  console.log(id)
   const navigate = useNavigate();
@@ -83,15 +87,12 @@ useEffect(() => {
     return <div className="text-center py-10">Loading...</div>;
   }
 
- const handleUpdate = async (data) => {
+const handleUpdate = async (data) => {
   try {
-    const districtName = districts.find(
-      (d) => d.id === data.district
-    )?.name;
+    setIsUpdating(true);
 
-    const upazilaName = upazilas.find(
-      (u) => u.id === data.upazila
-    )?.name;
+    const districtName = districts.find(d => d.id === data.district)?.name;
+    const upazilaName = upazilas.find(u => u.id === data.upazila)?.name;
 
     const updatedData = {
       ...data,
@@ -100,17 +101,37 @@ useEffect(() => {
     };
 
     await axiosSecure.put(`/donationRequests/${id}`, updatedData);
-    navigate("/donorDashboard/myDonationRequests");
+
+    // ✅ SHOW SUCCESS
+    setIsUpdating(false);
+    setIsUpdated(true);
+
+    // ✅ WAIT, THEN NAVIGATE
+    setTimeout(() => {
+
+    }, 800);
+
   } catch (error) {
     console.error("Update failed", error);
+    setIsUpdating(false);
   }
 };
+
 
 
   return (
 
    
     <div className="max-w-3xl mx-auto">
+
+  <div className="flex items-end justify-end mb-5">
+       
+        <button   onClick={() => navigate(-1)} className="text-sm text-gray-500 hover:text-gray-700">
+          ← Back to Previous
+        </button>
+      </div>
+
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -130,6 +151,7 @@ useEffect(() => {
                 Fill in the details to request blood donation
               </p>
             </div>
+            
           </div>
 
           {/* Body */}
@@ -138,6 +160,7 @@ useEffect(() => {
 
               {/* Requester Info */}
               <section className="space-y-4">
+                
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <User className="w-5 h-5 text-rose-500" />
                   Requester Information
@@ -280,11 +303,14 @@ useEffect(() => {
                              focus:outline-none focus:ring-2 focus:ring-rose-200 focus:border-rose-400"
                     >
                       <option>Select</option>
-                      <option>A+</option>
-                      <option>A-</option>
-                      <option>B+</option>
-                      <option>O+</option>
-                      <option>AB+</option>
+                      <option value="A+">A+</option>
+  <option value="A-">A−</option>
+  <option value="B+">B+</option>
+  <option value="B-">B−</option>
+  <option value="AB+">AB+</option>
+  <option value="AB-">AB−</option>
+  <option value="O+">O+</option>
+  <option value="O-">O−</option>
                     </select>
                   </div>
 
@@ -332,13 +358,57 @@ useEffect(() => {
               </section>
 
               {/* Submit */}
-              <button
-                type="submit"
-                className="w-full h-14 bg-gradient-to-r from-rose-500 to-rose-700 text-white rounded-xl text-lg flex items-center justify-center gap-2"
-              >
-                <Send className="w-5 h-5" />
-                Update Donation Request
-              </button>
+              <div className="flex gap-4 justify-center">
+  {/* Cancel */}
+  <button
+    type="button"
+    onClick={() => navigate(-1)}
+    className="py-3 px-20 h-14 rounded-xl text-lg
+      border border-gray-300 text-gray-700
+      hover:bg-gray-100 transition"
+  >
+    Cancel
+  </button>
+
+
+
+            <motion.button
+  type="submit"
+  disabled={isUpdating}
+  className="px-5 h-14 rounded-xl text-lg flex items-center justify-center gap-2
+    bg-gradient-to-r from-rose-500 to-rose-700 text-white"
+  whileTap={{ scale: 0.95 }}
+>
+  <AnimatePresence mode="wait">
+    {!isUpdated ? (
+      <motion.span
+        key="update"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.25 }}
+        className="flex items-center gap-2"
+      >
+        <Send className="w-5 h-5" />
+        {isUpdating ? "Updating..." : "Update Donation Request"}
+      </motion.span>
+    ) : (
+      <motion.span
+        key="success"
+        initial={{ scale: 0.6, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ type: "spring", stiffness: 300 }}
+        className="flex items-center gap-2 text-green-100"
+      >
+        <CheckCircle className="w-5 h-5" />
+        Updated Successfully
+      </motion.span>
+    )}
+  </AnimatePresence>
+</motion.button>
+
+</div>
 
             </form>
           </div>

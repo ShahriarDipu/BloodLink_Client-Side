@@ -1,15 +1,18 @@
-import { Droplet, MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
+import { Droplet, Eye, MoreVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router";
+import { Link, Navigate, useParams } from "react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../../Context/AuthContext";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
+import { DeleteConfirmModal } from "./DeleteConfirmModal";
 
 
 const LIMIT = 7;
 
 export const MyDonationRequest = () => {
+  const [deleteId, setDeleteId] = useState(null);
   const queryClient = useQueryClient();
+  const {id}=useParams()
 
   const axiosSecure = UseAxiosSecure();
   const { user, loading } = useContext(AuthContext);
@@ -40,23 +43,14 @@ export const MyDonationRequest = () => {
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
 
-const handleDelete = async (id) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this donation request?"
-  );
-
-  if (!confirmDelete) return;
-
+const handleDelete = async () => {
   try {
-   await axiosSecure.delete(`/donationrequests/${id}`, {
-  params: { email: user.email },
-});
+    await axiosSecure.delete(`/donationrequests/${deleteId}`, {
+      params: { email: user.email },
+    });
 
+    setDeleteId(null);
 
-    // Close dropdown
-    setOpenMenuId(null);
-
-    // Refresh list
     queryClient.invalidateQueries([
       "myDonationRequests",
       user?.email,
@@ -65,9 +59,9 @@ const handleDelete = async (id) => {
     ]);
   } catch (error) {
     console.error("Delete failed", error);
-    alert("Failed to delete request");
   }
 };
+
 
 
 
@@ -106,6 +100,14 @@ const handleDelete = async (id) => {
 
   return (
     <div className="space-y-6">
+           {/* Page Header */}
+      <div className="flex items-center justify-end mb-5">
+       
+        <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
+          ← Back to Home
+        </Link>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-900">
@@ -155,6 +157,7 @@ const handleDelete = async (id) => {
                   <th className="p-3">Blood</th>
                   <th className="p-3">Date</th>
                   <th className="p-3">Status</th>
+                   <th className="p-3">Type</th>
                   <th className="p-3 text-right">Actions</th>
 
                 </tr>
@@ -194,7 +197,17 @@ const handleDelete = async (id) => {
             {req.status}
           </span>
         </td>
-
+ <td className="p-3">
+        {req.requesterEmail === user.email ? (
+          <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+            Created by me
+          </span>
+        ) : (
+          <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+            Donated by me
+          </span>
+        )}
+      </td>
         {/* Actions */}
 <td className="p-3 text-right">
   <select
@@ -207,7 +220,7 @@ const handleDelete = async (id) => {
       }
 
       if (action === "delete") {
-        handleDelete(req._id);
+    setDeleteId(req._id);
       }
 
       if (action === "done") {
@@ -215,8 +228,11 @@ const handleDelete = async (id) => {
       }
 
       if (action === "cancel") {
-        handleStatusChange(req._id, "pending");
+        handleStatusChange(req._id, "canceled");
       }
+ if (action === "view") {
+    window.location.href = `/donorDashboard/viewDetails/${req._id}`;
+    }
 
       e.target.value = "";
     }}
@@ -225,20 +241,20 @@ const handleDelete = async (id) => {
     <option value="" disabled>
       Actions
     </option>
-
+     <option value="view"> View Details</option>
     {/* Edit only for creator */}
     <option value="edit"
      disabled={req.requesterEmail !== user.email}
-    >✏️ Edit</option>
+    > Edit</option>
 
     {/* Delete only for creator */}
     <option
       value="delete"
       disabled={req.requesterEmail !== user.email}
     >
-      🗑️ Delete
+      Delete
     </option>
-
+ 
     {/* Status actions ONLY when inprogress */}
     {req.status === "inprogress" && req.donorEmail === user.email && (
       <>
@@ -294,6 +310,13 @@ const handleDelete = async (id) => {
           )}
         </>
       )}
+
+      <DeleteConfirmModal
+  isOpen={!!deleteId}
+  onClose={() => setDeleteId(null)}
+  onConfirm={handleDelete}
+/>
+
     </div>
   );
 };

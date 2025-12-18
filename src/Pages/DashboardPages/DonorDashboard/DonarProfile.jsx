@@ -10,11 +10,12 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 import { AuthContext } from "../../../Context/AuthContext";
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useNavigate } from "react-router";
 import { useForm ,useWatch} from "react-hook-form";
 
 
 const ProfileField = ({ icon, label, value }) => {
+  const navigate = useNavigate();
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -152,8 +153,8 @@ const handleSaveChanges = async () => {
         
          <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">My Profile</h1>
+      <div className="flex items-center justify-end">
+       
         <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
           ← Back to Home
         </Link>
@@ -167,7 +168,8 @@ const handleSaveChanges = async () => {
           <div className="flex items-center gap-5">
             {/* Avatar */}
             <div className="w-20 h-20 rounded-2xl bg-white/20 border-4 border-white flex items-center justify-center text-white text-3xl font-bold">
-              {firstLetter}
+       <img src={donor?.profileUrl} alt="Donor" />
+
             </div>
 
             {/* User Info */}

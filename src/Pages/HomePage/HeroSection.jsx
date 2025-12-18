@@ -41,14 +41,14 @@ const HeroSection = () => {
 
             {/* Buttons */}
             <div className="flex flex-wrap gap-4">
-              <Link to="/register">
+              <Link to="/loginRegister">
                 <li className="btn bg-gradient-to-r from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white px-8 py-6 text-lg rounded-2xl shadow-xl shadow-rose-200 hover:shadow-rose-300 transition-all duration-300">
                   <Heart className="w-5 h-5 mr-2" />
                   Join as a Donor
                 </li>
               </Link>
 
-              <Link to="/search-donors">
+              <Link to="/search">
                 <li variant="outline" className="border-2 btn border-rose-200 text-rose-700 hover:bg-rose-50 px-8 py-6 text-lg rounded-2xl">
                   <Search className="w-5 h-5 mr-2" />
                   Search Donors

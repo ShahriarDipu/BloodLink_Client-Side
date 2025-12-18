@@ -62,7 +62,7 @@ const { data: userData, isLoading } = useQuery({
         {/* Navigation */}
         <nav className="flex-1 space-y-2">
           <NavLink
-            to="/donorDashboard/donorProfileDashboard"
+            to="/adminDashboard/dashbaord"
             end
             className={({ isActive }) =>
               `flex items-center justify-between px-4 py-3 rounded-xl transition ${
@@ -135,48 +135,12 @@ const { data: userData, isLoading } = useQuery({
             All Donation Requests
           </NavLink>
 
-          <NavLink
-            to="/adminDashboard/contentManagement"
-                       className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
-                isActive
-                  ? "bg-white text-rose-700 font-semibold"
-                  : "hover:bg-white/10"
-              }`
-            }
-            
+   
 
-
-
-          >
-            <ChartBar className="w-5 h-5" />
-           Content Management
-          </NavLink>
-
-          <NavLink
-            to="/donorDashboard/donorFunding"
-             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition ${
-                isActive
-                  ? "bg-white text-rose-700 font-semibold"
-                  : "hover:bg-white/10"
-              }`
-            }
-
-
-
-
-          >
-            <DollarSign className="w-5 h-5" />
-            Funding
-          </NavLink>
+   
         </nav>
 
-        {/* Logout */}
-        <button className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 mt-6">
-          <LogOut className="w-5 h-5" />
-          Logout
-        </button>
+        
       </aside>
 
       {/* Main Content */}

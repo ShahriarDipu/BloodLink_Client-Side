@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 const LIMIT = 4;
 
 export const DonorProfileDashboard = () => {
+  const [deleteId, setDeleteId] = useState(null);
+
 const queryClient = useQueryClient();
 
   const axiosSecure = UseAxiosSecure();
@@ -40,15 +42,35 @@ const queryClient = useQueryClient();
   const total = data?.total ?? 0;
   const totalPages = Math.ceil(total / LIMIT);
 
- const handleDelete = async (id) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this donation request?"
-  );
+//  const handleDelete = async (id) => {
 
-  if (!confirmDelete) return;
 
+//   if (!confirmDelete) return;
+
+//   try {
+//     await axiosSecure.delete(`/donationrequests/${id}`, {
+//   params: { email: user.email },
+// });
+
+//     queryClient.invalidateQueries([
+//       "myDonationRequests",
+//       user?.email,
+//       statusFilter,
+//       currentPage,
+//     ]);
+//   } catch (error) {
+//     console.error("Delete failed", error);
+//     alert("Failed to delete request");
+//   }
+// };
+
+  // Reset page when filter changes
+  
+  const handleDelete = async (id) => {
   try {
-    await axiosSecure.delete(`/donationrequests/${id}`);
+    await axiosSecure.delete(`/donationrequests/${id}`, {
+      params: { email: user.email },
+    });
 
     queryClient.invalidateQueries([
       "myDonationRequests",
@@ -58,11 +80,11 @@ const queryClient = useQueryClient();
     ]);
   } catch (error) {
     console.error("Delete failed", error);
-    alert("Failed to delete request");
   }
 };
 
-  // Reset page when filter changes
+  
+  
   useEffect(() => {
     setCurrentPage(1);
   }, [statusFilter]);
@@ -93,6 +115,14 @@ const queryClient = useQueryClient();
 
   return (
     <div>
+           {/* Page Header */}
+      <div className="flex items-center justify-end mb-3">
+       
+        <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
+          ← Back to Home
+        </Link>
+      </div>
+
 
  {/* Welcome Section */}
       <motion.div
@@ -103,8 +133,8 @@ const queryClient = useQueryClient();
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
         
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold mb-2">
+        <div className="relative z-10 " >
+          <h1 className="text-3xl font-bold mb-2">    
             Welcome back, {user?. displayName || 'User'}! 👋
           </h1>
           <p className="text-rose-100 text-lg">
@@ -118,7 +148,7 @@ const queryClient = useQueryClient();
 
       <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mt-7">
         <h1 className="text-xl font-semibold text-gray-900">
           Donar Dashboard
         </h1>
@@ -224,17 +254,22 @@ const queryClient = useQueryClient();
       }
 
       if (action === "delete") {
-        handleDelete(req._id);
-      }
+  setDeleteId(req._id); // just open confirm modal
+}
+
 
       if (action === "done") {
         handleStatusChange(req._id, "done");
       }
 
       if (action === "cancel") {
-        handleStatusChange(req._id, "pending");
+        handleStatusChange(req._id, "canceled");
       }
+       if (action === "view") {
+    window.location.href = `/donorDashboard/viewDetails/${req._id}`;
+    }
 
+     
       e.target.value = "";
     }}
     className="appearance-none select w-36"
@@ -242,24 +277,25 @@ const queryClient = useQueryClient();
     <option value="" disabled>
       Actions
     </option>
+     <option value="view"> View Details</option>
 
     {/* Edit only for creator */}
     <option value="edit"
      disabled={req.requesterEmail !== user.email}
-    >✏️ Edit</option>
+    >Edit</option>
 
     {/* Delete only for creator */}
     <option
       value="delete"
       disabled={req.requesterEmail !== user.email}
     >
-      🗑️ Delete
+      Delete
     </option>
 
     {/* Status actions ONLY when inprogress */}
     {req.status === "inprogress" && req.donorEmail === user.email && (
       <>
-        <option value="done">✅ Mark as Done</option>
+        <option value="done">Mark as Done</option>
         <option value="cancel"> Cancel Donation</option>
       </>
     )}
@@ -285,7 +321,39 @@ const queryClient = useQueryClient();
         </>
       )}
     </div>
-  
+{deleteId && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-2xl p-6 w-96 shadow-xl">
+      <h2 className="text-lg font-semibold text-gray-900">
+        Delete Donation Request?
+      </h2>
+      <p className="text-gray-600 mt-2">
+        This action cannot be undone.
+      </p>
+
+      <div className="flex justify-end gap-3 mt-6">
+        <button
+          onClick={() => setDeleteId(null)}
+          className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            handleDelete(deleteId);
+            setDeleteId(null);
+          }}
+          className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   )
 }

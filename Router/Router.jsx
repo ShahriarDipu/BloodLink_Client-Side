@@ -23,6 +23,7 @@ import { VolunteerDashbaord } from "../src/Pages/DashboardPages/VolunteerDashboa
 import { VolunteerProfile } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerProfile";
 import { AllBloodDonation } from "../src/Pages/DashboardPages/VolunteerDashboard/AllBloodDonation";
 import { VolunteerWelcomePage } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerWelcomePage";
+import { AdminProfileDashboard } from "../src/Pages/DashboardPages/AdminDashboard/AdminProfileDashboard";
 
 
 
@@ -41,7 +42,17 @@ export const  Router = createBrowserRouter([
 
 
     }
+  
   },
+  {
+  path:"/loginRegister",
+  Component:LoginRegistration,
+  loader: async () => {
+    const fullDistrict = await fetch("/districts.json").then(res => res.json());
+    const fullUpazila = await fetch("/upazilas.json").then(res => res.json());
+    return { fullDistrict, fullUpazila };
+  }
+},
 {path:"dashboard", Component:DashBoard},
 {
 path:"/donationRequests",
@@ -51,6 +62,7 @@ Component:DonationRequests
   path:"/donationRequestDetails/:id",
   Component:donationRequestDetails
 },
+
 {
   path:"/searchDonors",
   Component:SearchDonors,
@@ -63,7 +75,18 @@ Component:DonationRequests
 
     }
 },
+{
+  path:"/search",
+  Component:SearchDonors,
+  loader:async ()=> {
+      const districts = await fetch("/districts.json").then(res => res.json());
+      const upazilas = await fetch("/upazilas.json").then(res => res.json()); 
 
+ return { districts, upazilas };
+
+
+    }
+},
 {
   path:"donorDashboard",
   Component:DonorDashboard,
@@ -97,6 +120,10 @@ Component:DonationRequests
    loader:LocationLoader,
 },
 {
+  path:"viewDetails/:id",
+  Component:donationRequestDetails
+},
+{
   path:"donorFunding",
   Component:DonorFunding,
   loader:LocationLoader,
@@ -107,10 +134,19 @@ Component:DonationRequests
   path:"adminDashboard",
   Component:adminDashboard,
   children:[
+   
+    {
+      index: true, 
+      Component:AdminProfileDashboard,
+    },
        {
   path:"adminprofile",
   Component:DonarProfile,
   loader:LocationLoader,
+},
+{
+path:"dashbaord",
+Component:AdminProfileDashboard
 },
 
 {
@@ -133,6 +169,11 @@ Component:DonationRequests
   path:"volunteerDashboard",
   Component:VolunteerDashbaord,
   children:[
+
+    {
+      index: true, 
+      Component:DonorProfileDashboard,
+    },
     {
       path:"volunteerProfile",
       Component:DonarProfile,

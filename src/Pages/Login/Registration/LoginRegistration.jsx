@@ -56,97 +56,67 @@ const handleLogin=(data)=>{
  signInUser(data.email, data.password)
  .then(res=>{
 
-
+  
    navigate(location?.state || '/')
   console.log("login successful", res)
-  
+   reset();
  })
  .catch(error=>{
   console.log(error)
  })
 }
+const handleRegister = async (data) => {
+  try {
+    
+    await createUser(data.email, data.password);
 
-const handleRegister=(data)=>{
-    const profileImg = data.photo[0];
-  const role= "donor"
-  const status="Active"
-  data.status=status;
-data.role=role;
-
-console.log(data)
-createUser(data.email,data.password)
-
-  .then(result=>{
-        console.log(result.user)
-        //update user profile
-       
-
-        const formData = new FormData()
-        formData.append('image',profileImg)
-        const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST_API}`
-        axios.post(url, formData)
-        .then(res=>{
-          console.log("after img upload", res.data.data.url)
-
-
-          ///update user profile with image link and name
-
-          const userProfile = {
-            displayName: data.fullName,
-           
-            photoURL:res.data.data.url
-          }
-
-console.log(userProfile)
-          updateUserProfile(userProfile)
-          .then(res=>{
-            console.log("update successful")
-            //  navigate(location?.state || '/')
-          })
-          .catch(error=>{
-            console.log('error during update profile', error)
-          })
-        })
-
-      })
-      .catch(error=>{
-        console.log(error)
-      })
-
-
-
-
-
-
-const districtName = fullDistrict.find(d=> d.id === data.district)?.name
-const upazilaName = fullUpazila.find(u=> u.id === data.upazila)?.name
-
-
-const donorInfo ={
-   fullName : data.fullName,
-   email:data.email,
-   password:data.password,
-   profileUrl:data.photoUrl,
-   bloodGroup:data.bloodGroup,
-   district:districtName,
-   upazila:upazilaName,
-   status:"Active",
-   role:"Donor",
-   createdAt: new Date()
-}
-
- axiosSecure.post('/donors',donorInfo)
-  .then(res=>{
    setRegisterSuccess("Account created successfully!");
-   setTimeout(() => {
-  setActiveTab("login");  
-      setRegisterSuccess(""); 
-      reset(); 
-}, 1500);
-reset();
 
-  })
-}
+    const formData = new FormData();
+    formData.append("image", data.photo[0]);
+
+    const imgRes = await axios.post(
+      `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST_API}`,
+      formData
+    );
+
+    const photoURL = imgRes.data.data.url; 
+
+
+    await updateUserProfile({
+      displayName: data.fullName,
+      photoURL,
+    });
+
+
+    const districtName = fullDistrict.find(d => d.id === data.district)?.name;
+    const upazilaName = fullUpazila.find(u => u.id === data.upazila)?.name;
+
+  
+    const donorInfo = {
+      fullName: data.fullName,
+      email: data.email.toLowerCase(),
+      password:data.password,
+      profileUrl: photoURL, 
+      bloodGroup: data.bloodGroup,
+      district: districtName,
+      upazila: upazilaName,
+      status: "active",
+      role: "donor",
+      createdAt: new Date(),
+    };
+
+    await axiosSecure.post("/donors", donorInfo);
+setTimeout(() => {
+  setActiveTab("login");
+  setRegisterSuccess("");
+  reset();
+}, 300);
+   
+  } catch (error) {
+    console.error("Registration failed:", error);
+  }
+};
 
 
 

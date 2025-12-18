@@ -66,7 +66,7 @@ const { data: userData, isLoading } = useQuery({
 
 {/* Sidebar */}
 <aside
-  className={`fixed lg:static top-0 left-0 z-50 h-full sm:h-screen w-72
+  className={`fixed lg:static top-0 left-0 z-50 h-full sm:h-auto w-72
   bg-gradient-to-b from-rose-700 to-rose-900 text-white
   transform transition-transform duration-300
   ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
@@ -197,11 +197,7 @@ const { data: userData, isLoading } = useQuery({
           </NavLink>
         </nav>
 
-        {/* Logout */}
-        <button className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 mt-6">
-          <LogOut className="w-5 h-5" />
-          Logout
-        </button>
+    
       </aside>
 
       {/* Main Content */}

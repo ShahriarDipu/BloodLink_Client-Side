@@ -7,10 +7,10 @@ import {
   FileText,
   Send,
 } from "lucide-react";
-import { use } from "react";
+import { use, useState } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
-import { useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
 const CreateDonationRequest =()=> {
@@ -21,6 +21,7 @@ const CreateDonationRequest =()=> {
 
    const {user, loading}=use(AuthContext)
 const axiosSecure = UseAxiosSecure();
+
 
 const { data: dbUser, isLoading: statusLoading } = useQuery({
   queryKey: ["userStatus", user?.email],
@@ -127,6 +128,14 @@ if (dbUser?.status === "blocked") {
 
   return (
     <div className="max-w-3xl mx-auto">
+        {/* Page Header */}
+      <div className="flex items-center justify-end mb-3">
+       
+        <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
+          ← Back to Home
+        </Link>
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -301,6 +310,9 @@ if (dbUser?.status === "blocked") {
                       <option>B+</option>
                       <option>O+</option>
                       <option>AB+</option>
+                       <option>O-</option>
+                      <option>B-</option>
+                      <option>AB-</option>
                     </select>
                   </div>
 
