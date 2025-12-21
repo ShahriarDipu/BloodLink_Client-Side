@@ -14,6 +14,7 @@ const LoginRegistration = () => {
 
 
  const navigate = useNavigate();
+ const from = location.state?.from?.pathname || "/";
   const{createUser, signInUser,updateUserProfile }=use(AuthContext)
 
 const [registerSuccess, setRegisterSuccess] = useState("");
@@ -57,7 +58,8 @@ const handleLogin=(data)=>{
  .then(res=>{
 
   
-   navigate(location?.state || '/')
+   navigate(from, { replace: true });
+
   console.log("login successful", res)
    reset();
  })

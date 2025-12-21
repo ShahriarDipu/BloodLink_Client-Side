@@ -56,9 +56,16 @@ const queryClient = useQueryClient();
 };
 
 
-  if (isLoading) {
-    return <div className="text-center py-20">Loading request details…</div>;
-  }
+if (isLoading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <Droplet className="w-10 h-10 text-rose-500 animate-pulse mx-auto mb-3" />
+        <p className="text-gray-600">Loading request details…</p>
+      </div>
+    </div>
+  );
+}
 
   if (error || !request) {
     return <div className="text-center py-20">Request not found</div>;

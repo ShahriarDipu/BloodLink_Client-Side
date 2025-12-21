@@ -37,13 +37,20 @@ if (!user) {
   const amount = watch("amount");
 
   // 🔹 Fetch fundings
- const { data } = useQuery({
-  queryKey: ["fundings"],
+
+const { data } = useQuery({
+  queryKey: ["fundings", user?.email],
+  enabled: !!user?.email,
   queryFn: async () => {
-    const res = await axiosSecure.get("/fundings");
+    const res = await axiosSecure.get("/fundings", {
+      params: { email:user.email},
+    });
     return Array.isArray(res.data) ? res.data : [];
   },
 });
+
+
+
 
 const fundings = data ?? [];
 
@@ -68,30 +75,36 @@ const fundings = data ?? [];
 
   
 const queryClient = useQueryClient();
-  useEffect(() => {
+
+useEffect(() => {
   if (!user?.email) return;
 
   const params = new URLSearchParams(location.search);
   const sessionId = params.get("session_id");
 
-  if (sessionId) {
-    const amount = Number(localStorage.getItem("donationAmount"));
+  if (!sessionId) return;
 
-    axiosSecure
-      .post("/fundings", {
-        user_email: user.email,
-        amount,
-        stripeSessionId: sessionId,
-      })
-      .then(() => {
-        localStorage.removeItem("donationAmount");
+  // 🔐 Prevent duplicate save
+  const savedSession = sessionStorage.getItem("savedSessionId");
+  if (savedSession === sessionId) return;
 
-     
-        queryClient.invalidateQueries(["fundings"]);
-      })
-      .catch((err) => console.error("Save funding failed", err));
-  }
-}, [location.search, user?.email, axiosSecure, queryClient]);
+  const amount = Number(localStorage.getItem("donationAmount"));
+
+  axiosSecure
+    .post("/fundings", {
+      user_email: user.email,
+      amount,
+      stripeSessionId: sessionId,
+    })
+    .then(() => {
+      sessionStorage.setItem("savedSessionId", sessionId);
+      localStorage.removeItem("donationAmount");
+      queryClient.invalidateQueries(["fundings", user.email]);
+    })
+    .catch(console.error);
+
+}, [location.search, user?.email]);
+
 
 
 

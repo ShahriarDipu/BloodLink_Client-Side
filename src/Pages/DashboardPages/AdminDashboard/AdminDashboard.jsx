@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { NavLink, Outlet } from 'react-router';
 import { ChartBar, DollarSign, Droplet, House, LogOut, Plus, User, User2, Users } from 'lucide-react';
 
-export const adminDashboard = () => {
+export const AdminDashboard = () => {
 
 const axiosSecure = UseAxiosSecure()  
   const {user}= use(AuthContext)

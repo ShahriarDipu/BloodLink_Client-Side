@@ -13,7 +13,7 @@ import { DonorProfileDashboard } from "../src/Pages/DashboardPages/DonorDashboar
 import { LocationLoader } from "./LocationLoader";
 import { EditDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/EditDonationRequest";
 import { DonorFunding } from "../src/Pages/DashboardPages/DonorDashboard/DonorFunding";
-import { adminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/AdminDashboard";
+import { AdminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/AdminDashboard";
 import { AllUsers } from "../src/Pages/DashboardPages/AdminDashboard/AllUsers";
 import { AllDonationRequests } from "../src/Pages/DashboardPages/AdminDashboard/AllDonationRequests";
 import { ContentManagement } from "../src/Pages/DashboardPages/AdminDashboard/ContentManagement";
@@ -137,7 +137,7 @@ element:(<PrivateRoute><DonorFunding></DonorFunding></PrivateRoute>),
 },
 {
   path:"adminDashboard",
-  element:(<PrivateRoute><adminDashboard></adminDashboard></PrivateRoute>),
+  element:(<PrivateRoute><AdminDashboard></AdminDashboard></PrivateRoute>),
   children:[
    
     {
