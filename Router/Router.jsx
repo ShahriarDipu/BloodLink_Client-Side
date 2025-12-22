@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import { Home } from "./Home";
 import LoginRegistration from "../src/Pages/Login/Registration/LoginRegistration";
 import { DashBoard } from "../src/Components/Dashboard/DashBoard";
@@ -165,6 +165,15 @@ Component:AdminProfileDashboard
   
 },
 {
+  path:"editDonationRequest/:id",
+  Component:EditDonationRequest,
+   loader:LocationLoader,
+},
+{
+  path:"viewDetails/:id",
+  Component:donationRequestDetails
+},
+{
   path:"contentManagement",
   Component:ContentManagement,
 }
@@ -177,7 +186,7 @@ element:(<PrivateRoute><VolunteerDashboard></VolunteerDashboard></PrivateRoute>)
 
     {
       index: true, 
-      Component:DonorProfileDashboard,
+ element: <Navigate to="volunteerWelcomePage" replace />
     },
     {
       path:"volunteerProfile",

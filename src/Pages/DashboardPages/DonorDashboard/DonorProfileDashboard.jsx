@@ -123,7 +123,7 @@ export const DonorProfileDashboard = () => {
           </div>
         ) : (
           <>
-            {/* ✅ RESPONSIVE TABLE */}
+          
             <div className="relative -mx-4 sm:mx-0 overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
                 <table className="min-w-[300px] w-full  rounded-xl table-auto">

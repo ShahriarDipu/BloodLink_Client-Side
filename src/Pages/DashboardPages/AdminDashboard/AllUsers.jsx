@@ -127,14 +127,167 @@ const updateRoleMutation = useMutation({
 
         </div>
 
-        <button className="border rounded-lg px-4 py-2 text-sm flex items-center gap-2 hover:bg-gray-100">
+        {/* <button className="border rounded-lg px-4 py-2 text-sm flex items-center gap-2 hover:bg-gray-100">
           🔄 Refresh
-        </button>
+        </button> */}
       </div>
     </div>
+{/* ================= MOBILE CARDS ================= */}
+<div className="space-y-4 md:hidden">
+  {isLoading ? (
+    <div className="text-center py-10 text-gray-500">
+      Loading users...
+    </div>
+  ) : users.length === 0 ? (
+    <div className="text-center py-10 text-gray-500">
+      No users found
+    </div>
+  ) : (
+    users.map((user) => (
+      <div
+        key={user._id}
+        className="bg-white rounded-xl shadow-md p-4 space-y-3"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-rose-100 overflow-hidden flex items-center justify-center">
+              {user.profileUrl ? (
+                <img
+                  src={user.profileUrl}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <User2 className="text-rose-600" />
+              )}
+            </div>
+            <div>
+              <p className="font-semibold">{user.fullName}</p>
+              <p className="text-xs text-gray-500">{user.email}</p>
+            </div>
+          </div>
+
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium ${
+              user.status === "blocked"
+                ? "bg-red-100 text-red-700"
+                : "bg-emerald-100 text-emerald-700"
+            }`}
+          >
+            {user.status}
+          </span>
+        </div>
+
+        {/* Info */}
+        <div className="text-sm space-y-1">
+          <p>
+            <strong>Blood Group:</strong>{" "}
+            {user.bloodGroup || "-"}
+          </p>
+
+          <p>
+            <strong>Location:</strong>{" "}
+            {user.upazila && user.district
+              ? `${user.upazila}, ${user.district}`
+              : "-"}
+          </p>
+
+          <p>
+            <strong>Role:</strong>{" "}
+            <span className="inline-block bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
+              {user.role}
+            </span>
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="grid grid-cols-2 gap-2 pt-3">
+          {user.status !== "blocked" ? (
+            <button
+              onClick={() =>
+                updateStatusMutation.mutate({
+                  id: user._id,
+                  status: "blocked",
+                })
+              }
+              className="bg-red-600 text-white py-2 rounded-lg text-sm"
+            >
+              Block
+            </button>
+          ) : (
+            <button
+              onClick={() =>
+                updateStatusMutation.mutate({
+                  id: user._id,
+                  status: "active",
+                })
+              }
+              className="bg-emerald-600 text-white py-2 rounded-lg text-sm"
+            >
+              Unblock
+            </button>
+          )}
+
+          {user.role !== "admin" ? (
+            <button
+              onClick={() =>
+                updateRoleMutation.mutate({
+                  id: user._id,
+                  role: "admin",
+                })
+              }
+              className="bg-amber-600 text-white py-2 rounded-lg text-sm"
+            >
+              Make Admin
+            </button>
+          ) : (
+            <button
+              onClick={() =>
+                updateRoleMutation.mutate({
+                  id: user._id,
+                  role: "donor",
+                })
+              }
+              className="bg-gray-700 text-white py-2 rounded-lg text-sm"
+            >
+              Remove Admin
+            </button>
+          )}
+
+          {user.role !== "volunteer" ? (
+            <button
+              onClick={() =>
+                updateRoleMutation.mutate({
+                  id: user._id,
+                  role: "volunteer",
+                })
+              }
+              className="bg-blue-600 text-white py-2 rounded-lg text-sm col-span-2"
+            >
+              Make Volunteer
+            </button>
+          ) : (
+            <button
+              onClick={() =>
+                updateRoleMutation.mutate({
+                  id: user._id,
+                  role: "donor",
+                })
+              }
+              className="bg-gray-600 text-white py-2 rounded-lg text-sm col-span-2"
+            >
+              Remove Volunteer
+            </button>
+          )}
+        </div>
+      </div>
+    ))
+  )}
+</div>
 
     {/* Table */}
-    <div className="relative mt-6">
+    <div className="relative mt-6 hidden md:block">
       <table className="w-full border-collapse text-sm">
         <thead className="bg-gray-50 text-gray-600">
           <tr>

@@ -145,7 +145,7 @@ const handleUpdate = async (data) => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">
-                Create Donation Request
+                Update Donation Request
               </h1>
               <p className="text-sm text-gray-500">
                 Fill in the details to request blood donation

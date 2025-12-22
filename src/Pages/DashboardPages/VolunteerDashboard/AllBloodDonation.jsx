@@ -3,12 +3,13 @@ import { Link } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 import { Droplet, MoreVertical } from "lucide-react";
-
+import { useEffect, useRef } from "react";
 const ITEMS_PER_PAGE = 5;
 
 
 
 export const AllBloodDonation = () => {
+  const dropdownRef = useRef(null);
 const statusStyles = {
   pending: "bg-yellow-100 text-yellow-700",
   inprogress: "bg-blue-100 text-blue-700",
@@ -55,7 +56,23 @@ const updateStatusMutation = useMutation({
   },
 });
 
-  
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target)
+    ) {
+      setOpenId(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
   return (
  <div>
  <div>
@@ -85,9 +102,94 @@ const updateStatusMutation = useMutation({
             <option value="canceled">Canceled</option>
           </select>
         </div>
+{/* Mobile Responsive */}
+ <div className="space-y-4 md:hidden ">
+          {isLoading ? (
+            <div className="text-center py-10">Loading...</div>
+          ) : requests.length === 0 ? (
+            <div className="text-center py-10">No requests found</div>
+          ) : (
+            requests.map((req) => (
+              <div
+                key={req._id}
+                className="rounded-xl p-4 shadow-md space-y-3"
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold text-lg">
+                    {req.recipientName}
+                  </h3>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                      statusStyles[req.status]
+                    }`}
+                  >
+                    {req.status}
+                  </span>
+                </div>
 
+                <div className="text-sm space-y-1 bg-gradient-to-r from-rose-700 to-rose-800 rounded-2xl shadow-lg p-6 text-white">
+                  <p>
+                    <strong>Blood:</strong>{" "}
+                    <span className="inline-flex items-center gap-1">
+                      <Droplet className="w-4 h-4 text-rose-500" />
+                      {req.bloodGroup}
+                    </span>
+                  </p>
+
+                  <p>
+                    <strong>Location:</strong>{" "}
+                    {req.upazila}, {req.district}
+                  </p>
+
+                  <p>
+                    <strong>Requester:</strong> {req.requesterEmail}
+                  </p>
+
+                  <p>
+                    <strong>Donor Name:</strong>{" "}
+                    {req.donorName || "-"}
+                  </p>
+
+                  <p>
+                    <strong>Donor Email:</strong>{" "}
+                    {req.donorEmail || "-"}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                {req.status === "inprogress" && (
+                  <div className="flex gap-3 pt-3">
+                    <button
+                      onClick={() =>
+                        updateStatusMutation.mutate({
+                          id: req._id,
+                          status: "done",
+                        })
+                      }
+                      className="flex-1 bg-green-600 text-white py-2 rounded-lg text-sm"
+                    >
+                      Mark Done
+                    </button>
+
+                    <button
+                      onClick={() =>
+                        updateStatusMutation.mutate({
+                          id: req._id,
+                          status: "canceled",
+                        })
+                      }
+                      className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
         {/* Table */}
-        <table className="w-full text-sm border-collapse">
+        <table className="hidden md:block w-full text-sm border-collapse">
           <thead className="bg-gray-50 text-gray-600">
             <tr>
               <th className="p-3 text-left">Recipient</th>
@@ -155,7 +257,10 @@ const updateStatusMutation = useMutation({
                     </button>
 
                     {openId === req._id && req.status === "inprogress" && (
-                      <div className="absolute right-0 mt-2 w-40 bg-white border shadow rounded z-50">
+                     <div
+    ref={dropdownRef}
+    className="absolute right-0 mt-2 w-40 bg-white border shadow rounded z-50"
+  >
                         <button
                           onClick={() =>
                             updateStatusMutation.mutate({

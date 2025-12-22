@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { RouterProvider } from "react-router/dom";
 import { Router } from '../Router/Router.jsx';
 import { AuthProvider } from './Context/AuthProvider.jsx';
+import { Toaster } from "react-hot-toast";
 import {
   QueryClient,
   QueryClientProvider,
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+         <Toaster position="top-center" />
         <RouterProvider router={Router} />
       </AuthProvider>
     </QueryClientProvider>

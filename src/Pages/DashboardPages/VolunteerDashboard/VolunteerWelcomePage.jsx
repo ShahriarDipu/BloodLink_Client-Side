@@ -151,8 +151,73 @@ export const VolunteerWelcomePage = () => {
         </div>
       ) : (
         <>
+        {/* Mobile Responsive Cards */}
+<div className="space-y-4 md:hidden">
+  {isLoading ? (
+    <div className="text-center py-10">Loading...</div>
+  ) : requests.length === 0 ? (
+    <div className="text-center py-10">No requests found</div>
+  ) : (
+    requests.map((req) => (
+      <div
+        key={req._id}
+        className="rounded-xl p-4 shadow-md space-y-3 bg-white"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold text-lg">
+            {req.recipientName}
+          </h3>
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium
+              ${
+                req.status === "pending"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : req.status === "inprogress"
+                  ? "bg-blue-100 text-blue-700"
+                  : req.status === "done"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+              }`}
+          >
+            {req.status}
+          </span>
+        </div>
+
+        {/* Gradient Card Body */}
+        <div className="text-sm space-y-2 bg-gradient-to-r from-rose-700 to-rose-800 rounded-2xl shadow-lg p-5 text-white">
+          <p>
+            <strong>Blood:</strong>{" "}
+            <span className="inline-flex items-center gap-1">
+              <Droplet className="w-4 h-4 text-white" />
+              {req.bloodGroup}
+            </span>
+          </p>
+
+          <p>
+            <strong>Location:</strong>{" "}
+            {req.upazila}, {req.district}
+          </p>
+
+          <p>
+            <strong>Date:</strong>{" "}
+            {req.donationDate} {req.donationTime}
+          </p>
+
+          <p>
+            <strong>Type:</strong>{" "}
+            {req.requesterEmail === user.email
+              ? "Created by me"
+              : "Donated by me"}
+          </p>
+        </div>
+      </div>
+    ))
+  )}
+</div>
+
           {/* Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto hidden md:block overflow-x-auto">
             <table className="w-full border rounded-xl overflow-hidden">
               <thead className="bg-gray-50 text-sm text-gray-600">
                 <tr>
@@ -222,7 +287,7 @@ export const VolunteerWelcomePage = () => {
           </div>
 
           {/* Pagination */}
-         <Link to="/donorDashboard/myDonationRequest">
+         <Link to="/volunteerDashboard/allBloodDonationRequest">
          <button
             
                 className="w-90 mx-auto h-14 bg-gradient-to-r from-rose-500 to-rose-700 text-white rounded-xl text-lg flex items-center justify-center gap-2"
@@ -234,6 +299,8 @@ export const VolunteerWelcomePage = () => {
         </>
       )}
     </div>
+    
+
   
     </div>
   )

@@ -112,9 +112,124 @@ const statusStyles = {
             <option value="canceled">Canceled</option>
           </select>
         </div>
+{/* ================= MOBILE CARDS ================= */}
+<div className="space-y-4 md:hidden">
+  {isLoading ? (
+    <div className="text-center py-10">Loading...</div>
+  ) : requests.length === 0 ? (
+    <div className="text-center py-10">No requests found</div>
+  ) : (
+    requests.map((req) => (
+      <div
+        key={req._id}
+        className="rounded-xl p-4 shadow-md space-y-3 bg-white"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold text-lg">
+            {req.recipientName}
+          </h3>
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium capitalize
+              ${statusStyles[req.status]}
+            `}
+          >
+            {req.status}
+          </span>
+        </div>
+
+        {/* Gradient Body */}
+        <div className="text-sm space-y-2 bg-gradient-to-r from-rose-700 to-rose-800 rounded-2xl shadow-lg p-5 text-white">
+          <p>
+            <strong>Blood:</strong>{" "}
+            <span className="inline-flex items-center gap-1">
+              <Droplet className="w-4 h-4 text-white" />
+              {req.bloodGroup}
+            </span>
+          </p>
+
+          <p>
+            <strong>Location:</strong>{" "}
+            {req.upazila}, {req.district}
+          </p>
+
+          <p>
+            <strong>Requester:</strong> {req.requesterName}
+          </p>
+
+          <p>
+            <strong>Donor Name:</strong>{" "}
+            {req.donorName || "-"}
+          </p>
+
+          <p>
+            <strong>Donor Email:</strong>{" "}
+            {req.donorEmail || "-"}
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3 pt-3">
+          <button
+            onClick={() =>
+              navigate(`/adminDashboard/viewDetails/${req._id}`)
+            }
+            className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm"
+          >
+            View
+          </button>
+
+          <button
+            onClick={() =>
+              navigate(`/adminDashboard/editDonationRequest/${req._id}`)
+            }
+            className="flex-1 bg-gray-800 text-white py-2 rounded-lg text-sm"
+          >
+            Edit
+          </button>
+        </div>
+
+        {req.status === "inprogress" && (
+          <div className="flex gap-3">
+            <button
+              onClick={() =>
+                updateStatusMutation.mutate({
+                  id: req._id,
+                  status: "done",
+                })
+              }
+              className="flex-1 bg-green-600 text-white py-2 rounded-lg text-sm"
+            >
+              Mark Done
+            </button>
+
+            <button
+              onClick={() =>
+                updateStatusMutation.mutate({
+                  id: req._id,
+                  status: "canceled",
+                })
+              }
+              className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+
+        <button
+          onClick={() => setDeleteId(req._id)}
+          className="w-full bg-red-100 text-red-700 py-2 rounded-lg text-sm"
+        >
+          Delete
+        </button>
+      </div>
+    ))
+  )}
+</div>
 
         {/* Table */}
-        <table className="w-full text-sm border-collapse">
+        <table className="hidden md:block w-full text-sm border-collapse">
           <thead className="bg-gray-50 text-gray-600">
             <tr>
               <th className="p-3 text-left">Recipient</th>
@@ -178,11 +293,11 @@ const statusStyles = {
       const action = e.target.value;
 
       if (action === "view") {
-        navigate(`/donorDashboard/viewDetails/${req._id}`);
+        navigate(`/adminDashboard/viewDetails/${req._id}`);
       }
 
       if (action === "edit") {
-        navigate(`/donorDashboard/editDonationRequest/${req._id}`);
+        navigate(`/adminDashboard/editDonationRequest/${req._id}`);
       }
 
       if (action === "delete") {

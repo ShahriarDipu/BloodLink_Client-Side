@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const CreateDonationRequest =()=> {
 
-
+const [isSubmitted, setIsSubmitted] = useState(false);
 
 
 
@@ -83,6 +83,20 @@ console.log(donationRequest)
       donationRequest
     );
     console.log("Request saved:", res.data);
+
+
+
+setIsSubmitted(true);
+
+  // optional: reset after animation
+  setTimeout(() => {
+    setIsSubmitted(false);
+  }, 3000);
+
+
+
+
+
   } catch (error) {
     console.error("Failed to create donation request", error);
   }
@@ -360,13 +374,36 @@ if (dbUser?.status === "blocked") {
               </section>
 
               {/* Submit */}
-              <button
-                type="submit"
-                className="w-full h-14 bg-gradient-to-r from-rose-500 to-rose-700 text-white rounded-xl text-lg flex items-center justify-center gap-2"
-              >
-                <Send className="w-5 h-5" />
-                Submit Donation Request
-              </button>
+              <motion.button
+  type="submit"
+  disabled={isSubmitted}
+  whileHover={{ scale: 1.03 }}
+  whileTap={{ scale: 0.95 }}
+  animate={
+    isSubmitted
+      ? { backgroundColor: "#16a34a" } // green
+      : {}
+  }
+  transition={{ duration: 0.3 }}
+  className={`w-full h-14 rounded-xl text-lg flex items-center justify-center gap-2 text-white
+    ${
+      isSubmitted
+        ? "bg-green-600 cursor-not-allowed"
+        : "bg-gradient-to-r from-rose-500 to-rose-700"
+    }`}
+>
+  {isSubmitted ? (
+    <>
+      ✅ Donation Request Created
+    </>
+  ) : (
+    <>
+      <Send className="w-5 h-5" />
+      Submit Donation Request
+    </>
+  )}
+</motion.button>
+
 
             </form>
           </div>

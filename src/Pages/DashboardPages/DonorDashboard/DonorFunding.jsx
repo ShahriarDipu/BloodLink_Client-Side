@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { use, useEffect, useRef, useState } from 'react'
 import { useForm } from "react-hook-form";
 import { AuthContext } from '../../../Context/AuthContext';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +7,7 @@ import { UseAxiosSecure } from '../../../Hooks/UseAxiosSecure';
 import { Link, useLocation } from 'react-router';
 
 export const DonorFunding = () => {
-
+const hasPostedRef = useRef(false);
 const location = useLocation();
 
 const axiosSecure=UseAxiosSecure();
@@ -85,11 +85,11 @@ useEffect(() => {
   if (!sessionId) return;
 
   // 🔐 Prevent duplicate save
-  const savedSession = sessionStorage.getItem("savedSessionId");
-  if (savedSession === sessionId) return;
+if (hasPostedRef.current) return;
+  hasPostedRef.current = true;
 
   const amount = Number(localStorage.getItem("donationAmount"));
-
+ if (!amount) return;
   axiosSecure
     .post("/fundings", {
       user_email: user.email,

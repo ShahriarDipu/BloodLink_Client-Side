@@ -6,12 +6,14 @@ import { useLoaderData, useLocation, useNavigate } from "react-router";
 import { UseAxiosSecure } from "../../../Hooks/UseAxiosSecure";
 import axios from "axios";
 
+import toast from "react-hot-toast";
 
 
 
 const LoginRegistration = () => {
    const location = useLocation();
 
+const [loginError, setLoginError] = useState("");
 
  const navigate = useNavigate();
  const from = location.state?.from?.pathname || "/";
@@ -65,6 +67,8 @@ const handleLogin=(data)=>{
  })
  .catch(error=>{
   console.log(error)
+   toast.error(error.message);
+     setLoginError(error.message);
  })
 }
 const handleRegister = async (data) => {
@@ -211,6 +215,11 @@ setTimeout(() => {
                   focus:border-rose-300 focus:ring-2 focus:ring-rose-200 outline-none"
                 />
               </div>
+{loginError && (
+  <div className="bg-red-50 border border-red-300 text-red-600 text-sm px-4 py-2 rounded-lg mb-4">
+    {loginError}
+  </div>
+)}
 
               <button
                 type="submit"
@@ -218,6 +227,9 @@ setTimeout(() => {
               >
                 Login
               </button>
+              <div>
+
+              </div>
             </form>
           )}
 
