@@ -167,10 +167,14 @@ const handleSaveChanges = async () => {
         <div className="bg-gradient-to-r from-rose-500 to-rose-700 p-8 flex items-center justify-between">
           <div className="flex items-center gap-5">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-2xl bg-white/20 border-4 border-white flex items-center justify-center text-white text-3xl font-bold">
-       <img src={donor?.profileUrl} alt="Donor" />
+          <div className="w-20 h-20 rounded-2xl bg-white/20 border-4 border-white overflow-hidden flex items-center justify-center">
+  <img
+    src={donor?.profileUrl}
+    alt="Donor"
+    className="w-full h-full object-cover"
+  />
+</div>
 
-            </div>
 
             {/* User Info */}
             <div className="text-white">
