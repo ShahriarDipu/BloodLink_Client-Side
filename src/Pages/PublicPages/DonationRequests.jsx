@@ -104,7 +104,7 @@ const totalPages = data?.totalPages || 0;
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-rose-500" />
                 <span>
-                  {request.recipientDistrict}, {request.recipientUpazila}
+                  {request.hospitalAddress}
                 </span>
               </div>
 

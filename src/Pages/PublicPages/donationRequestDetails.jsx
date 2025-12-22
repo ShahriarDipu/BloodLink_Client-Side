@@ -1,9 +1,10 @@
 import React, { use } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import { UseAxiosSecure } from '../../Hooks/UseAxiosSecure';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from "react";
 import { motion } from "motion/react";
+
 import {
   ArrowLeft, Droplet, MapPin, Calendar, Clock, Mail,
   User, Heart, FileText, CheckCircle,
@@ -12,6 +13,8 @@ import {
 import { AuthContext } from '../../Context/AuthContext';
 
 export const donationRequestDetails = () => {
+  const navigate = useNavigate();
+
     const {id}=useParams();
    const { user} = use(AuthContext);
   const axiosSecure = UseAxiosSecure();
@@ -78,13 +81,13 @@ if (isLoading) {
   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
 
     {/* Back Button */}
-    <Link
-      to="/donationRequests"
-      className="inline-flex items-center gap-2 text-gray-600 hover:text-rose-600 mb-6"
-    >
-      <ArrowLeft className="w-4 h-4" />
-      Back to Donation Requests
-    </Link>
+   <button
+  onClick={() => navigate(-1)}
+  className="inline-flex items-center gap-2 text-gray-600 hover:text-rose-600 mb-6"
+>
+  <ArrowLeft className="w-4 h-4" />
+  Back
+</button>
 
     {/* Main Card */}
     <div className="bg-white rounded-xl shadow-xl overflow-hidden">

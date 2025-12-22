@@ -157,7 +157,7 @@ export const VolunteerDashboard = () => {
             Create Request
           </NavLink> */}
 
-          <NavLink
+          {/* <NavLink
             to="/volunteerDashboard/volunteerFunding"
             onClick={() => setIsSidebarOpen(false)}
             className={({ isActive }) =>
@@ -170,7 +170,7 @@ export const VolunteerDashboard = () => {
           >
             <DollarSign className="w-5 h-5" />
             Funding
-          </NavLink>
+          </NavLink> */}
         </nav>
 
         {/* Logout */}

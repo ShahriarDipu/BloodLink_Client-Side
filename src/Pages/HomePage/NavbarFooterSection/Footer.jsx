@@ -1,7 +1,18 @@
 import React from 'react'
-import { Droplet ,Phone, Mail, MapPin} from 'lucide-react'
+import { Droplet ,Phone, Mail, MapPin, Twitter, Facebook, Linkedin} from 'lucide-react'
 import { Link } from 'react-router'
 export const Footer = () => {
+  const XIcon = ({ className = "w-5 h-5" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.213-6.82-5.97 6.82H1.676l7.73-8.84L1.25 2.25h6.83l4.713 6.23 5.45-6.23Zm-1.16 17.52h1.832L7.08 4.126H5.115L17.084 19.77Z" />
+  </svg>
+);
+
   return (
   <footer className="bg-gray-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,6 +51,36 @@ export const Footer = () => {
                 <li className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" /> Dhaka, Bangladesh
                 </li>
+               <div className="flex items-center gap-4 pt-2">
+   <a
+    href="https://x.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-gray-400 hover:text-white transition"
+  >
+    <XIcon className="w-5 h-5" />
+  </a>
+
+
+  <a
+    href="https://facebook.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-gray-400 hover:text-white transition"
+  >
+    <Facebook className="w-5 h-5" />
+  </a>
+
+  <a
+    href="https://linkedin.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-gray-400 hover:text-white transition"
+  >
+    <Linkedin className="w-5 h-5" />
+  </a>
+</div>
+
               </ul>
             </div>
           </div>

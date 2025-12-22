@@ -26,6 +26,8 @@ import { VolunteerWelcomePage } from "../src/Pages/DashboardPages/VolunteerDashb
 import { AdminProfileDashboard } from "../src/Pages/DashboardPages/AdminDashboard/AdminProfileDashboard";
 import { PrivateRoute } from "../src/routes/PrivateRoute";
 import { VolunteerDashboard } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerDashboard";
+import Error from "./Error";
+import { AdminStatistics } from "../src/Pages/DashboardPages/AdminDashboard/AdminStatistics";
 
 
 
@@ -90,7 +92,7 @@ Component:donationRequestDetails
     }
 },
 {
-  path:"donorDashboard",
+  path:"/donorDashboard",
 element:(<PrivateRoute>
  <DonorDashboard></DonorDashboard>
 </PrivateRoute>
@@ -136,7 +138,7 @@ element:(<PrivateRoute><DonorFunding></DonorFunding></PrivateRoute>),
       ]
 },
 {
-  path:"adminDashboard",
+  path:"/adminDashboard",
   element:(<PrivateRoute><AdminDashboard></AdminDashboard></PrivateRoute>),
   children:[
    
@@ -180,13 +182,15 @@ Component:AdminProfileDashboard
   ]
 },
 {
-  path:"volunteerDashboard",
+  path:"/volunteerDashboard",
 element:(<PrivateRoute><VolunteerDashboard></VolunteerDashboard></PrivateRoute>),
   children:[
 
     {
       index: true, 
- element: <Navigate to="volunteerWelcomePage" replace />
+      element: <Navigate to="volunteerWelcomePage" replace />,
+//  element: <Navigate to="AdminProfileDashboard" replace />
+// Component:AdminProfileDashboard
     },
     {
       path:"volunteerProfile",
@@ -200,13 +204,17 @@ element:(<PrivateRoute><VolunteerDashboard></VolunteerDashboard></PrivateRoute>)
     },
     {
       path:"volunteerWelcomePage",
-      Component:VolunteerWelcomePage
+      Component:AdminProfileDashboard
     },
     {
       path:"volunteerFunding",
       Component:DonorFunding
     }
   ]
-}
+},
+{
+        path:"*",
+        Component:Error
+    }
 
 ]);

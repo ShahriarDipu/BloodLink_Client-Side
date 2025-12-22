@@ -132,15 +132,15 @@ const handleDashboard = () => {
 
   if (role === "admin") {
     console.log("Navigating to ADMIN dashboard");
-    navigate("adminDashboard");
+    navigate("/adminDashboard");
   } 
   else if (role === "volunteer") {
     console.log("Navigating to VOLUNTEER dashboard");
-    navigate("volunteerDashboard");
+    navigate("/volunteerDashboard");
   } 
   else {
     console.log("Navigating to DONOR dashboard");
-    navigate("donorDashboard");
+    navigate("/donorDashboard");
   }
 };
 
