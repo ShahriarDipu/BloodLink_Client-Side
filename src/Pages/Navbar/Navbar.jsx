@@ -72,7 +72,16 @@ const links=<>
  </NavLink>
 
 </li>
-
+<li>
+  <NavLink to="/blog">
+Blog
+ </NavLink>
+</li>
+<li>
+  <NavLink to="/about">
+About
+ </NavLink>
+</li>
  </div>
     
 </>
@@ -225,9 +234,25 @@ const handleDashboard = () => {
     </div>
 :
 
-  <div className="navbar-end">
-      <NavLink to="/loginRegistration" className="btn">Sign In</NavLink>
+<div className="navbar-end">
+  <NavLink
+    to="/loginRegistration"
+    className="
+      px-5 py-2.5
+      rounded-xl
+      bg-gradient-to-r from-rose-500 to-rose-700
+      text-white
+      font-medium
+      shadow-md
+      hover:from-rose-600 hover:to-rose-800
+      transition
+      duration-200
+    "
+  >
+    Sign In
+  </NavLink>
 </div>
+
 }
   
     {/* RIGHT */}

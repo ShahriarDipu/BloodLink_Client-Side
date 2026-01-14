@@ -123,8 +123,124 @@ export const DonorProfileDashboard = () => {
           </div>
         ) : (
           <>
-          
-            <div className="relative -mx-4 sm:mx-0 overflow-x-auto">
+          {/* CARD VIEW – Mobile & Tablet */}
+<div className="md:hidden space-y-4">
+  {requests.map((req) => (
+    <motion.div
+      key={req._id}
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl shadow-lg border border-rose-100 overflow-hidden"
+    >
+      {/* Header */}
+      <div className="bg-gradient-to-r from-rose-500 to-rose-700 p-4 text-white">
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold text-lg">
+            {req.recipientName}
+          </h3>
+          <span className="text-sm bg-white/20 px-3 py-1 rounded-full">
+            {req.bloodGroup}
+          </span>
+        </div>
+        <p className="text-sm text-rose-100 mt-1">
+          {req.district}, {req.upazila}
+        </p>
+      </div>
+
+      {/* Body */}
+      <div className="p-4 space-y-3 text-sm">
+        <div className="flex justify-between">
+          <span className="text-gray-500">Date</span>
+          <span className="font-medium">
+            {req.donationDate} {req.donationTime}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-gray-500">Status</span>
+          <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+            {req.status}
+          </span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-gray-500">Type</span>
+          {req.requesterEmail === user.email ? (
+            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">
+              Created by me
+            </span>
+          ) : (
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+              Donated by me
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Actions */}
+    <div className="border-t p-4 flex justify-end">
+  <select
+    defaultValue=""
+    onChange={(e) => {
+      const action = e.target.value;
+
+      if (action === "edit") {
+        window.location.href = `/donorDashboard/editDonationRequest/${req._id}`;
+      }
+      if (action === "delete") {
+        setDeleteId(req._id);
+      }
+      if (action === "done") {
+        handleStatusChange(req._id, "done");
+      }
+      if (action === "cancel") {
+        handleStatusChange(req._id, "canceled");
+      }
+      if (action === "view") {
+        window.location.href = `/donorDashboard/viewDetails/${req._id}`;
+      }
+
+      e.target.value = "";
+    }}
+    className="
+      w-auto
+      min-w-[160px]
+      border
+      rounded-lg
+      px-3
+      py-2
+      text-sm
+      bg-white
+      focus:outline-none
+      focus:ring-2
+      focus:ring-rose-500
+    "
+  >
+    <option value="" disabled>
+      Select Action
+    </option>
+    <option value="view">View Details</option>
+    <option value="edit" disabled={req.requesterEmail !== user.email}>
+      Edit
+    </option>
+    <option value="delete" disabled={req.requesterEmail !== user.email}>
+      Delete
+    </option>
+    {req.status === "inprogress" &&
+      req.donorEmail === user.email && (
+        <>
+          <option value="done">Mark as Done</option>
+          <option value="cancel">Cancel Donation</option>
+        </>
+      )}
+  </select>
+</div>
+
+    </motion.div>
+  ))}
+</div>
+
+            <div className="hidden md:block  relative -mx-4 sm:mx-0 overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
                 <table className="min-w-[300px] w-full  rounded-xl table-auto">
                   <thead className="bg-gray-50 text-sm text-gray-600">

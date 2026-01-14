@@ -13,7 +13,7 @@ import { DonorProfileDashboard } from "../src/Pages/DashboardPages/DonorDashboar
 import { LocationLoader } from "./LocationLoader";
 import { EditDonationRequest } from "../src/Pages/DashboardPages/DonorDashboard/EditDonationRequest";
 import { DonorFunding } from "../src/Pages/DashboardPages/DonorDashboard/DonorFunding";
-import { AdminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/AdminDashboard";
+import { AdminDashboard } from "../src/Pages/DashboardPages/AdminDashboard/adminDashboard";
 import { AllUsers } from "../src/Pages/DashboardPages/AdminDashboard/AllUsers";
 import { AllDonationRequests } from "../src/Pages/DashboardPages/AdminDashboard/AllDonationRequests";
 import { ContentManagement } from "../src/Pages/DashboardPages/AdminDashboard/ContentManagement";
@@ -28,6 +28,8 @@ import { PrivateRoute } from "../src/routes/PrivateRoute";
 import { VolunteerDashboard } from "../src/Pages/DashboardPages/VolunteerDashboard/VolunteerDashboard";
 import Error from "./Error";
 import { AdminStatistics } from "../src/Pages/DashboardPages/AdminDashboard/AdminStatistics";
+import Blog from "../src/Pages/PublicPages/Blog";
+import About from "../src/Pages/PublicPages/About";
 
 
 
@@ -90,6 +92,14 @@ Component:donationRequestDetails
 
 
     }
+},
+{
+path:"/blog",
+Component:Blog
+},
+{
+  path:"/about",
+  Component:About
 },
 {
   path:"/donorDashboard",
