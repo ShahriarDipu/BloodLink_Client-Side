@@ -1,5 +1,5 @@
-import { Droplet } from "lucide-react";
-import React, { use, useState } from "react";
+import { Droplet, User2Icon, UserCheck2Icon } from "lucide-react";
+import React, { use, useContext, useState } from "react";
 import { useForm, useWatch } from 'react-hook-form';
 import { AuthContext } from "../../../Context/AuthContext";
 import { useLoaderData, useLocation, useNavigate } from "react-router";
@@ -17,7 +17,7 @@ const [loginError, setLoginError] = useState("");
 
  const navigate = useNavigate();
  const from = location.state?.from?.pathname || "/";
-  const{createUser, signInUser,updateUserProfile }=use(AuthContext)
+  const{createUser, signInUser,updateUserProfile,  signInWithGoogle }=useContext(AuthContext)
 
 const [registerSuccess, setRegisterSuccess] = useState("");
 
@@ -124,6 +124,29 @@ setTimeout(() => {
   }
 };
 
+  // ------------------------- DEMO LOGIN ----------------------
+const handleDemoLogin = async (type) => {
+  try {
+    if (type === "user") {
+      await signInUser(
+        import.meta.env.VITE_DEMO_USER_EMAIL,
+        import.meta.env.VITE_DEMO_USER_PASSWORD
+      );
+      navigate(from, { replace: true });
+    }
+
+    if (type === "admin") {
+      await signInUser(
+        import.meta.env.VITE_DEMO_ADMIN_EMAIL,
+        import.meta.env.VITE_DEMO_ADMIN_PASSWORD
+      );
+      navigate(from, { replace: true });
+    }
+
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
 
 
 
@@ -227,7 +250,36 @@ setTimeout(() => {
               >
                 Login
               </button>
-              <div>
+             
+              <div className="mt-5">
+<div className="mt-6 border-t pt-4">
+  <p className="text-center text-sm text-gray-500 mb-3">
+    Just exploring? Try a demo account
+  </p>
+
+  <div className="grid grid-cols-2 gap-3">
+    <button
+      type="button"
+      onClick={() => handleDemoLogin("user")}
+      className="flex items-center justify-center gap-2 rounded-lg border border-rose-200 
+      bg-rose-50 text-rose-700 py-2 text-sm font-medium
+      hover:bg-rose-100 transition"
+    >
+      <User2Icon></User2Icon> Demo User
+    </button>
+
+    <button
+      type="button"
+      onClick={() => handleDemoLogin("admin")}
+      className="flex items-center justify-center gap-2 rounded-lg border border-rose-300 
+      bg-rose-50 text-rose-700 py-2 text-sm font-medium
+      hover:bg-rose-100 transition"
+    >
+      <UserCheck2Icon></UserCheck2Icon> Demo Admin
+    </button>
+  </div>
+</div>
+
 
               </div>
             </form>
